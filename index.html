@@ -306,7 +306,7 @@ input:focus,textarea:focus{outline:none;border-color:#888;background:#fff}
 // =====================================================
 // ★ 設定你的 Apps Script 網址（部署後貼在這裡）
 // =====================================================
-const API_URL = '請將你的 Apps Script 部署網址貼在這裡';
+const API_URL = 'https://script.google.com/macros/s/AKfycbyxVH0bwe96t70tJPa7L-drDhwUnD2ppwpxgsssQzpnndK967KWPfbYWcwMLFTxTXG5OA/exec';
 // 範例: const API_URL = 'https://script.google.com/macros/s/AKfycb.../exec';
 
 const STD = { wedding: 25, baby: 35 };
@@ -484,15 +484,21 @@ function render(){
   ];
   const total = d.totalHours || 1;
   const hrDiff = round2(theory - d.productionHours);
+  const prodPct = Math.round((theory + d.productionHours) / total * 100);
+  const isOnTarget = prodPct >= 80;
+
   let analysisMsg='', analysisBg='#E1F5EE', analysisBorder='#9FE1CB', analysisColor='#085041';
-  if(hrDiff < -2){
-    analysisMsg=`實際生產工時超出理論工時 <strong>${Math.abs(hrDiff)} hr</strong>，產能低於標準。建議對照人員技能等級排查熟練度或流程問題。`;
+  if(!isOnTarget && hrDiff < -2){
+    analysisMsg=`生產工時佔 <strong>${prodPct}%</strong>，未達 80% 目標，且實際生產超出理論工時 <strong>${Math.abs(hrDiff)} hr</strong>。建議對照人員技能等級排查熟練度或流程問題。`;
+    analysisBg='#FCEBEB'; analysisBorder='#F09595'; analysisColor='#791F1F';
+  } else if(!isOnTarget){
+    analysisMsg=`生產工時佔 <strong>${prodPct}%</strong>，未達 80% 目標。摺盒或未解釋工時比例偏高，建議確認非生產時間的用途。`;
     analysisBg='#FAEEDA'; analysisBorder='#FAC775'; analysisColor='#633806';
-  } else if(unexplained > total * 0.15){
-    analysisMsg=`未解釋工時達 <strong>${unexplained} hr</strong>（佔 ${Math.round(unexplained/total*100)}%）。可能為教育訓練或等待備料，建議與訓練時數（${d.trainingHours} hr）對照確認。`;
+  } else if(hrDiff < -2){
+    analysisMsg=`生產工時佔 <strong>${prodPct}%</strong>，達標。但實際生產超出理論工時 <strong>${Math.abs(hrDiff)} hr</strong>，產能略低於標準，建議持續觀察。`;
     analysisBg='#FAEEDA'; analysisBorder='#FAC775'; analysisColor='#633806';
   } else {
-    analysisMsg=`工時分配正常。理論 ${theory} hr，實際生產 ${d.productionHours} hr，差異 ${hrDiff>=0?'+':''}${hrDiff} hr。`;
+    analysisMsg=`生產工時佔 <strong>${prodPct}%</strong>，達標（目標 80%）。理論 ${theory} hr，實際生產 ${d.productionHours} hr，差異 ${hrDiff>=0?'+':''}${hrDiff} hr。`;
   }
 
   // SVG 甜甜圈
@@ -500,27 +506,37 @@ function render(){
   const circ=2*Math.PI*R;
   let offset=0;
   const slices=hrItems.map(h=>{
-    const pct2=h.val/total;
-    const dash=pct2*circ;
+    const p=h.val/total;
+    const dash=p*circ;
     const s=`<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="${h.color}" stroke-width="${stroke}" stroke-dasharray="${dash.toFixed(2)} ${(circ-dash).toFixed(2)}" stroke-dashoffset="${(-offset*circ).toFixed(2)}" transform="rotate(-90 ${cx} ${cy})"/>`;
-    offset+=pct2;
+    offset+=p;
     return s;
   }).join('');
 
+  // 目標線 80%（在 288 度處畫一條白線）
+  const targetAngle = (0.8 * 360 - 90) * Math.PI / 180;
+  const innerR = R - stroke/2 - 2, outerR = R + stroke/2 + 2;
+  const tx1 = (cx + innerR * Math.cos(targetAngle)).toFixed(1);
+  const ty1 = (cy + innerR * Math.sin(targetAngle)).toFixed(1);
+  const tx2 = (cx + outerR * Math.cos(targetAngle)).toFixed(1);
+  const ty2 = (cy + outerR * Math.sin(targetAngle)).toFixed(1);
+
   document.getElementById('hr-flow').innerHTML = `
     <div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap">
-      <div style="flex-shrink:0">
+      <div style="flex-shrink:0;position:relative">
         <svg width="180" height="180" viewBox="0 0 180 180">
           <circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="#f0f0ee" stroke-width="${stroke}"/>
           ${total>0?slices:''}
-          <text x="${cx}" y="${cy-8}" text-anchor="middle" font-size="13" fill="#888" font-family="inherit">總人時</text>
-          <text x="${cx}" y="${cy+12}" text-anchor="middle" font-size="20" font-weight="600" fill="#1a1a1a" font-family="inherit">${d.totalHours}</text>
-          <text x="${cx}" y="${cy+28}" text-anchor="middle" font-size="11" fill="#aaa" font-family="inherit">hr</text>
+          <line x1="${tx1}" y1="${ty1}" x2="${tx2}" y2="${ty2}" stroke="#fff" stroke-width="3"/>
+          <text x="${cx}" y="${cy-10}" text-anchor="middle" font-size="11" fill="#888" font-family="inherit">生產工時佔比</text>
+          <text x="${cx}" y="${cy+14}" text-anchor="middle" font-size="22" font-weight="600" fill="${isOnTarget?'#1D9E75':'#E24B4A'}" font-family="inherit">${prodPct}%</text>
+          <text x="${cx}" y="${cy+30}" text-anchor="middle" font-size="10" fill="${isOnTarget?'#1D9E75':'#E24B4A'}" font-family="inherit">${isOnTarget?'✓ 達標':'✗ 未達標'}</text>
         </svg>
+        <div style="font-size:10px;color:#aaa;text-align:center;margin-top:-6px">白線 = 80% 目標</div>
       </div>
       <div style="flex:1;min-width:180px">
         ${hrItems.map(h=>{
-          const p=total>0?Math.round(h.val/total*100):0;
+          const p2=total>0?Math.round(h.val/total*100):0;
           return `<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
             <div style="width:12px;height:12px;border-radius:3px;background:${h.color};flex-shrink:0"></div>
             <div style="flex:1">
@@ -528,11 +544,14 @@ function render(){
               <div style="display:flex;align-items:baseline;gap:6px">
                 <span style="font-size:18px;font-weight:600;color:#1a1a1a">${h.val}</span>
                 <span style="font-size:11px;color:#aaa">hr</span>
-                <span style="font-size:11px;color:#888">${p}%</span>
+                <span style="font-size:11px;color:#888">${p2}%</span>
               </div>
             </div>
           </div>`;
         }).join('')}
+        <div style="font-size:11px;color:#888;border-top:1px solid #f0f0ee;padding-top:8px;margin-top:4px">
+          總人時：<strong style="color:#1a1a1a">${d.totalHours} hr</strong>　目標：生產工時 ≥ 80%
+        </div>
       </div>
     </div>
     <div style="background:${analysisBg};border:1px solid ${analysisBorder};border-radius:8px;padding:10px 14px;font-size:12px;line-height:1.8;color:${analysisColor};margin-top:14px">${analysisMsg}</div>`;
