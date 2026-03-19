@@ -448,8 +448,11 @@ function render(){
   const effPct=d.totalHours>0?Math.round(theory/d.totalHours*100):0;
   const diff=round2(theory-d.productionHours);
 
-  // KPI → 產能總覽
+  // 共用計算
   const unexplained = round2(Math.max(0, d.totalHours - d.productionHours - d.boxFoldingCount - d.trainingHours));
+  const kaido = d.totalHours > 0 ? Math.round(d.productionHours / d.totalHours * 100) : 0;
+
+  // KPI → 產能總覽
   const prodItems = [
     {label:'婚禮', val:d.weddingCount, color:'#1D9E75'},
     {label:'彌月', val:d.babyCount, color:'#378ADD'},
@@ -471,11 +474,11 @@ function render(){
     <div style="border-top:1px solid #f0f0ee;padding-top:12px;display:flex;gap:20px;flex-wrap:wrap">
       <div style="font-size:12px;color:#555">總組裝：<strong style="color:#1a1a1a;font-size:16px">${totalBox.toLocaleString()}</strong> 盒</div>
       <div style="font-size:12px;color:#555">總人時：<strong style="color:#1a1a1a">${d.totalHours}</strong> hr</div>
-      <div style="font-size:12px;color:#555">工時效率：<strong style="color:#1a1a1a">${effPct}%</strong></div>
+      <div style="font-size:12px;color:#555">稼動率：<strong style="color:#1a1a1a">${kaido}%</strong></div>
       <div style="font-size:12px;color:#555">不良金額：<strong style="color:${d.badCost>5000?'#A32D2D':'#1a1a1a'}">$${(d.badCost||0).toLocaleString()}</strong></div>
     </div>`;
 
-  // 工時流向分析 — 甜甜圈圖（正確邏輯）
+  // 工時分析
   const hrItems = [
     {label:'實際生產工時', val:d.productionHours,  color:'#1D9E75'},
     {label:'摺盒工時',    val:d.boxFoldingCount,  color:'#BA7517'},
@@ -484,76 +487,83 @@ function render(){
   ];
   const total = d.totalHours || 1;
   const hrDiff = round2(theory - d.productionHours);
-  const prodPct = Math.round(d.productionHours / total * 100);
-  const isOnTarget = prodPct >= 80;
 
-  let analysisMsg='', analysisBg='#E1F5EE', analysisBorder='#9FE1CB', analysisColor='#085041';
-  if(!isOnTarget && hrDiff < -2){
-    analysisMsg=`實際生產佔 <strong>${prodPct}%</strong>，未達 80% 目標，且實際生產超出理論工時 <strong>${Math.abs(hrDiff)} hr</strong>（理論 ${theory} hr）。建議對照人員技能等級排查。`;
-    analysisBg='#FCEBEB'; analysisBorder='#F09595'; analysisColor='#791F1F';
-  } else if(!isOnTarget){
-    analysisMsg=`實際生產佔 <strong>${prodPct}%</strong>，未達 80% 目標。理論工時 ${theory} hr，實際生產 ${d.productionHours} hr，差異 ${hrDiff>=0?'+':''}${hrDiff} hr。`;
-    analysisBg='#FAEEDA'; analysisBorder='#FAC775'; analysisColor='#633806';
-  } else if(hrDiff < -2){
-    analysisMsg=`實際生產佔 <strong>${prodPct}%</strong>，達標。但實際生產超出理論工時 <strong>${Math.abs(hrDiff)} hr</strong>（理論 ${theory} hr），建議持續觀察。`;
-    analysisBg='#FAEEDA'; analysisBorder='#FAC775'; analysisColor='#633806';
+  // 稼動率分析訊息
+  let kaidoMsg='', kaidoBg='#E1F5EE', kaidoBorder='#9FE1CB', kaidoColor='#085041';
+  if(kaido >= 80){
+    kaidoMsg = `稼動率 <strong>${kaido}%</strong>，達標（目標 ≥ 80%）。`;
+    if(hrDiff < -2) kaidoMsg += ` 但實際生產比理論工時多用 <strong>${Math.abs(hrDiff)} hr</strong>，速度略低於標準，建議觀察人員熟練度。`;
+    else if(hrDiff > 2) kaidoMsg += ` 實際生產比理論工時少用 ${hrDiff} hr，速度優於標準。`;
   } else {
-    analysisMsg=`實際生產佔 <strong>${prodPct}%</strong>，達標（目標 80%）。理論工時 ${theory} hr，實際生產 ${d.productionHours} hr，差異 ${hrDiff>=0?'+':''}${hrDiff} hr。`;
+    kaidoBg='#FCEBEB'; kaidoBorder='#F09595'; kaidoColor='#791F1F';
+    const nonProd = round2(d.totalHours - d.productionHours);
+    kaidoMsg = `稼動率 <strong>${kaido}%</strong>，未達 80% 目標。非生產工時共 <strong>${nonProd} hr</strong>`;
+    const parts = [];
+    if(d.boxFoldingCount > 0) parts.push(`摺盒 ${d.boxFoldingCount} hr`);
+    if(d.trainingHours > 0) parts.push(`訓練 ${d.trainingHours} hr`);
+    if(unexplained > 0) parts.push(`未解釋 ${unexplained} hr`);
+    if(parts.length) kaidoMsg += `（${parts.join('、')}）`;
+    kaidoMsg += '。';
+    if(hrDiff < -2) kaidoMsg += ` 另實際生產速度比標準慢 ${Math.abs(hrDiff)} hr，可能為人員熟練度或流程問題。`;
   }
 
   // SVG 甜甜圈
-  const R=70, cx=90, cy=90, stroke=28;
-  const circ=2*Math.PI*R;
+  const R=70, cx=90, cy=90, stroke=28, circ=2*Math.PI*R;
   let offset=0;
   const slices=hrItems.map(h=>{
     const p=h.val/total;
     const dash=p*circ;
     const s=`<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="${h.color}" stroke-width="${stroke}" stroke-dasharray="${dash.toFixed(2)} ${(circ-dash).toFixed(2)}" stroke-dashoffset="${(-offset*circ).toFixed(2)}" transform="rotate(-90 ${cx} ${cy})"/>`;
-    offset+=p;
-    return s;
+    offset+=p; return s;
   }).join('');
-
-  // 目標線 80%
-  const targetAngle = (0.8 * 360 - 90) * Math.PI / 180;
-  const innerR = R - stroke/2 - 2, outerR = R + stroke/2 + 2;
-  const tx1=(cx+innerR*Math.cos(targetAngle)).toFixed(1), ty1=(cy+innerR*Math.sin(targetAngle)).toFixed(1);
-  const tx2=(cx+outerR*Math.cos(targetAngle)).toFixed(1), ty2=(cy+outerR*Math.sin(targetAngle)).toFixed(1);
+  const targetAngle=(0.8*360-90)*Math.PI/180;
+  const iR=R-stroke/2-2, oR=R+stroke/2+2;
+  const tx1=(cx+iR*Math.cos(targetAngle)).toFixed(1), ty1=(cy+iR*Math.sin(targetAngle)).toFixed(1);
+  const tx2=(cx+oR*Math.cos(targetAngle)).toFixed(1), ty2=(cy+oR*Math.sin(targetAngle)).toFixed(1);
 
   document.getElementById('hr-flow').innerHTML = `
-    <div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap">
-      <div style="flex-shrink:0">
+    <div style="display:flex;align-items:flex-start;gap:24px;flex-wrap:wrap">
+      <div style="flex-shrink:0;text-align:center">
         <svg width="180" height="180" viewBox="0 0 180 180">
           <circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="#f0f0ee" stroke-width="${stroke}"/>
           ${total>0?slices:''}
           <line x1="${tx1}" y1="${ty1}" x2="${tx2}" y2="${ty2}" stroke="#fff" stroke-width="3"/>
-          <text x="${cx}" y="${cy-14}" text-anchor="middle" font-size="10" fill="#888" font-family="inherit">實際生產佔比</text>
-          <text x="${cx}" y="${cy+10}" text-anchor="middle" font-size="22" font-weight="600" fill="${isOnTarget?'#1D9E75':'#E24B4A'}" font-family="inherit">${prodPct}%</text>
-          <text x="${cx}" y="${cy+26}" text-anchor="middle" font-size="10" fill="${isOnTarget?'#1D9E75':'#E24B4A'}" font-family="inherit">${isOnTarget?'✓ 達標':'✗ 未達標'}</text>
-          <text x="${cx}" y="${cy+42}" text-anchor="middle" font-size="9" fill="#aaa" font-family="inherit">理論 ${theory} hr</text>
+          <text x="${cx}" y="${cy-16}" text-anchor="middle" font-size="10" fill="#888" font-family="inherit">稼動率</text>
+          <text x="${cx}" y="${cy+12}" text-anchor="middle" font-size="26" font-weight="600" fill="${kaido>=80?'#1D9E75':'#E24B4A'}" font-family="inherit">${kaido}%</text>
+          <text x="${cx}" y="${cy+28}" text-anchor="middle" font-size="10" fill="${kaido>=80?'#1D9E75':'#E24B4A'}" font-family="inherit">${kaido>=80?'✓ 達標':'✗ 未達標'}</text>
+          <text x="${cx}" y="${cy+44}" text-anchor="middle" font-size="9" fill="#aaa" font-family="inherit">理論 ${theory} hr</text>
         </svg>
-        <div style="font-size:10px;color:#aaa;text-align:center;margin-top:-4px">白線 = 80% 目標</div>
+        <div style="font-size:10px;color:#aaa;margin-top:-4px">白線 = 80% 目標</div>
+        <div style="margin-top:10px;background:#f5f5f3;border-radius:8px;padding:8px 12px;text-align:left;font-size:11px;color:#555;line-height:1.9">
+          <div>總人時：<strong style="color:#1a1a1a">${d.totalHours} hr</strong></div>
+          <div>理論工時：<strong style="color:#378ADD">${theory} hr</strong></div>
+          <div>工時差異：<strong style="color:${hrDiff>=0?'#1D9E75':'#E24B4A'}">${hrDiff>=0?'+':''}${hrDiff} hr</strong></div>
+        </div>
       </div>
-      <div style="flex:1;min-width:180px">
+      <div style="flex:1;min-width:200px">
+        <div style="font-size:12px;font-weight:500;color:#1a1a1a;margin-bottom:12px">工時去向</div>
         ${hrItems.map(h=>{
           const p2=total>0?Math.round(h.val/total*100):0;
-          return `<div style="display:flex;align-items:center;gap:10px;margin-bottom:11px">
-            <div style="width:12px;height:12px;border-radius:3px;background:${h.color};flex-shrink:0"></div>
-            <div style="flex:1">
-              <div style="font-size:12px;color:#555;margin-bottom:2px">${h.label}</div>
-              <div style="display:flex;align-items:baseline;gap:6px">
-                <span style="font-size:17px;font-weight:600;color:#1a1a1a">${h.val}</span>
-                <span style="font-size:11px;color:#aaa">hr</span>
-                <span style="font-size:11px;color:#888">${p2}%</span>
+          const barW=Math.max(p2,0);
+          return `<div style="margin-bottom:14px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+              <div style="display:flex;align-items:center;gap:6px">
+                <div style="width:10px;height:10px;border-radius:2px;background:${h.color};flex-shrink:0"></div>
+                <span style="font-size:12px;color:#555">${h.label}</span>
               </div>
+              <div style="font-size:12px;color:#1a1a1a;font-weight:500">${h.val} hr <span style="font-size:10px;color:#aaa;font-weight:400">${p2}%</span></div>
+            </div>
+            <div style="background:#f0f0ee;border-radius:3px;height:6px">
+              <div style="height:6px;border-radius:3px;background:${h.color};width:${barW}%;transition:width .4s"></div>
             </div>
           </div>`;
         }).join('')}
-        <div style="font-size:11px;color:#888;border-top:1px solid #f0f0ee;padding-top:8px;margin-top:2px">
-          總人時：<strong style="color:#1a1a1a">${d.totalHours} hr</strong>　目標：實際生產 ≥ 80%
+        <div style="font-size:11px;color:#888;border-top:1px solid #f0f0ee;padding-top:8px;margin-top:4px">
+          稼動率 ＝ 實際生產工時 ÷ 總人時　｜　目標 ≥ 80%
         </div>
       </div>
     </div>
-    <div style="background:${analysisBg};border:1px solid ${analysisBorder};border-radius:8px;padding:10px 14px;font-size:12px;line-height:1.8;color:${analysisColor};margin-top:14px">${analysisMsg}</div>`;
+    <div style="background:${kaidoBg};border:1px solid ${kaidoBorder};border-radius:8px;padding:10px 14px;font-size:12px;line-height:1.9;color:${kaidoColor};margin-top:14px">${kaidoMsg}</div>`;
 
   document.getElementById('quality-summary').innerHTML=`不良類型：<strong>${d.badTypes||'—'}</strong><br>報廢大宗品：<strong>${d.scrapItem||'—'}</strong>（${d.scrapQty} 個，${d.scrapRate}%）<br>不良總數：<strong>${d.badCount} 個</strong>　金額：<strong>$${(d.badCost||0).toLocaleString()}</strong><br>餅乾不良率：<strong>${pct(d.cookieRate)}</strong>　禮盒報廢率：<strong>${pct(d.boxScrapRate)}</strong>`;
   document.getElementById('train-summary').innerHTML=`訓練時數：<strong style="font-size:22px">${d.trainingHours}</strong> hr<br>訓練小結：<strong>${d.trainingNote||'—'}</strong>`;
@@ -649,16 +659,42 @@ function cw(dir){ curW+=dir; render(); }
 const SKILL_LEVELS = ['基本','獨立','熟練','異常處理'];
 const SKILL_COLORS = ['sk-0','sk-1','sk-2','sk-3'];
 const STORE_STAFF_KEY = 'asm_staff_v1';
-let staffData = { members:[], stations:[] };
+let staffSaving = false;
 
-function loadStaffData(){
+async function loadStaffData(){
+  // 先從 localStorage 載入作為暫存
   try{ const r=localStorage.getItem(STORE_STAFF_KEY); if(r) staffData=JSON.parse(r); }catch(e){}
   if(!staffData.members) staffData.members=[];
   if(!staffData.stations) staffData.stations=['備貨站','組裝站','包裝站','出貨站','品檢站'];
+  // 從 Google Sheets 同步最新資料（覆蓋本機）
+  try{
+    const res = await fetch(API_URL+'?action=read_staff');
+    const json = await res.json();
+    if(json.ok && json.data){
+      if(json.data.members) staffData.members = json.data.members;
+      if(json.data.stations) staffData.stations = json.data.stations;
+      localStorage.setItem(STORE_STAFF_KEY, JSON.stringify(staffData));
+    }
+  }catch(e){ console.log('Staff sync failed, using local data'); }
 }
 
-function saveStaffData(){
+async function saveStaffData(toSheets=false){
+  // 永遠存 localStorage（快速暫存）
   try{ localStorage.setItem(STORE_STAFF_KEY,JSON.stringify(staffData)); }catch(e){}
+  // 只有明確要求且是管理員才寫入 Google Sheets
+  if(!toSheets || !adminPwd) return;
+  if(staffSaving) return;
+  staffSaving = true;
+  document.getElementById('sstatus').textContent='技能資料儲存中…';
+  try{
+    const base = API_URL+'?action=write_staff&pwd='+encodeURIComponent(adminPwd);
+    await fetch(base+'&key=members&payload='+encodeURIComponent(JSON.stringify(staffData.members)));
+    await fetch(base+'&key=stations&payload='+encodeURIComponent(JSON.stringify(staffData.stations)));
+    document.getElementById('sstatus').textContent='技能資料已儲存 · '+new Date().toLocaleTimeString('zh-TW');
+  }catch(e){
+    document.getElementById('sstatus').textContent='技能儲存失敗，請重試';
+  }
+  staffSaving = false;
 }
 
 function getMemberSkills(memberName){
@@ -712,7 +748,7 @@ function addStaff(){
   if(!name) return;
   if(staffData.members.find(m=>m.name===name)){ alert('此人員已存在'); return; }
   staffData.members.push({name,skills:{},weeklyNote:{}});
-  saveStaffData(); renderStaffTab(); renderTrainPreview();
+  saveStaffData(true); renderStaffTab(); renderTrainPreview();
   document.getElementById('new-staff-name').value='';
 }
 
@@ -721,14 +757,14 @@ function addStation(){
   if(!name) return;
   if(staffData.stations.includes(name)){ alert('此站別已存在'); return; }
   staffData.stations.push(name);
-  saveStaffData(); renderStaffTab();
+  saveStaffData(true); renderStaffTab();
   document.getElementById('new-station-name').value='';
 }
 
 function deleteStaff(memberName){
   if(!confirm(`確定要刪除「${memberName}」？此操作無法復原`)) return;
   staffData.members=staffData.members.filter(m=>m.name!==memberName);
-  saveStaffData(); renderStaffTab(); renderTrainPreview();
+  saveStaffData(true); renderStaffTab(); renderTrainPreview();
 }
 
 function renameStaff(oldName){
@@ -737,14 +773,14 @@ function renameStaff(oldName){
   if(staffData.members.find(m=>m.name===newName.trim())){ alert('此姓名已存在'); return; }
   const m=staffData.members.find(m=>m.name===oldName);
   if(m) m.name=newName.trim();
-  saveStaffData(); renderStaffTab(); renderTrainPreview();
+  saveStaffData(true); renderStaffTab(); renderTrainPreview();
 }
 
 function deleteStation(stationName){
   if(!confirm(`確定要刪除站別「${stationName}」？所有人員此站別的等級資料也會清除`)) return;
   staffData.stations=staffData.stations.filter(s=>s!==stationName);
   staffData.members.forEach(m=>{ if(m.skills) delete m.skills[stationName]; });
-  saveStaffData(); renderStaffTab();
+  saveStaffData(true); renderStaffTab();
 }
 
 function renameStation(oldName){
@@ -759,11 +795,11 @@ function renameStation(oldName){
       delete m.skills[oldName];
     }
   });
-  saveStaffData(); renderStaffTab();
+  saveStaffData(true); renderStaffTab();
 }
 
-function saveStaffWeek(){
-  // 確保本週所有人的技能都初始化並儲存
+async function saveStaffWeek(){
+  // 確保本週所有人的技能都初始化並存成獨立快照
   staffData.members.forEach(m=>{
     if(!m.weeklySkills) m.weeklySkills={};
     if(!m.weeklySkills[wkey(curW)]) {
@@ -773,10 +809,10 @@ function saveStaffWeek(){
       });
     }
   });
-  saveStaffData();
+  await saveStaffData(true); // 寫入 Google Sheets
   const msg=document.getElementById('staff-smsg');
   msg.classList.remove('hide');
-  setTimeout(()=>msg.classList.add('hide'),2500);
+  setTimeout(()=>msg.classList.add('hide'),3000);
 }
 
 function renderStaffTab(){
@@ -849,8 +885,14 @@ function renderTrainPreview(){
 }
 
 // ---- 啟動 ----
-loadStaffData();
-loadFromServer();
+let staffData = { members:[], stations:[] };
+async function init(){
+  await loadFromServer();
+  await loadStaffData();
+  renderStaffTab();
+  renderTrainPreview();
+}
+init();
 </script>
 </body>
 </html>
