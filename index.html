@@ -98,7 +98,49 @@ input:focus,textarea:focus{outline:none;border-color:#888;background:#fff}
 .station-row:last-child{border-bottom:none}
 .station-name{color:#555;min-width:70px}
 .skill-controls{display:flex;align-items:center;gap:4px}
+.sched-steps{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+.sched-step{padding:6px 14px;border-radius:8px;font-size:12px;cursor:pointer;border:1px solid #ddd;background:#fff;color:#666;font-family:inherit}
+.sched-step:hover{background:#f5f5f3}
+.sched-step.on{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
+.dz-sched{border:2px dashed #ddd;border-radius:10px;padding:28px;text-align:center;cursor:pointer;transition:all .2s;background:#fafaf8}
+.dz-sched:hover{border-color:#1a1a1a;background:#f5f5f3}
+.att-cb-sched{width:16px;height:16px;cursor:pointer;accent-color:#1a1a1a}
+.fbar-sched{height:16px;border-radius:8px;background:#f0f0ee;overflow:hidden;margin-top:6px}
+.ffill-sched{height:100%;border-radius:8px;transition:width .3s;background:linear-gradient(90deg,#1D9E75,#378ADD)}
+.ffill-sched.warn{background:linear-gradient(90deg,#BA7517,#E24B4A)}
+.ffill-sched.full{background:linear-gradient(90deg,#E24B4A,#A32D2D)}
+.day-card-sched{background:#fff;border:1px solid #ebebeb;border-radius:12px;margin-bottom:16px;overflow:hidden}
+.day-hdr-sched{background:#1a1a1a;color:#fff;padding:10px 16px;font-weight:600;font-size:13px;display:flex;justify-content:space-between;align-items:center}
+.day-hdr-info{font-size:10px;font-weight:400;color:#aaa}
+.line-hdr-sched{padding:6px 16px;font-weight:600;font-size:11px;display:flex;align-items:center;gap:8px}
+.line-hdr-w{background:rgba(29,158,117,0.1);color:#1D9E75}
+.line-hdr-b{background:rgba(55,138,221,0.1);color:#378ADD}
+.members-bar-sched{display:flex;flex-wrap:wrap;gap:4px;padding:4px 16px 8px}
+.member-chip-sched{padding:3px 8px;border-radius:4px;font-size:10px;font-weight:600;background:#f0f0ee;color:#1a1a1a;border:1px solid #ddd}
+.member-chip-sched.on-leave{opacity:0.3;text-decoration:line-through}
+.member-chip-sched.on-train{opacity:0.5;border-color:#378ADD;background:#E6F1FB}
+.station-chip-sched{padding:2px 10px;border-radius:4px;font-size:10px;font-weight:600;border:1.5px solid #ddd;background:#f5f5f3;display:inline-block;margin:2px;cursor:grab;user-select:none;transition:all .15s}
+.station-chip-sched:hover{border-color:#1a1a1a;background:#fff;transform:translateY(-1px);box-shadow:0 2px 4px rgba(0,0,0,0.08)}
+.station-chip-sched.dragging{opacity:0.4;cursor:grabbing}
+.station-chip-sched.drag-over{border-color:#1D9E75;background:#E1F5EE}
+.station-chip-sched .st-edit{background:none;border:none;font-size:10px;font-weight:600;color:inherit;outline:none;width:auto;min-width:20px;text-align:center;font-family:inherit;padding:0 2px}
+.time-grid-sched{display:flex;flex-direction:column}
+.time-row-sched{display:flex;border-bottom:1px solid #f0f0ee;min-height:28px}
+.time-row-sched:last-child{border-bottom:none}
+.time-lbl-sched{width:70px;flex-shrink:0;padding:5px 8px;font-size:10px;font-weight:600;color:#888;background:#fafaf8;text-align:center;display:flex;align-items:center;justify-content:center;border-right:1px solid #eee}
+.time-blk-sched{flex:1;padding:4px 8px;font-size:11px;min-height:26px;display:flex;align-items:center;cursor:text;outline:none;transition:background .15s}
+.time-blk-sched[contenteditable="true"]:hover{background:#fafaf8}
+.time-blk-sched[contenteditable="true"]:focus{background:#FFF9E6;box-shadow:inset 0 0 0 2px #BA7517}
+.time-blk-sched.lunch{background:#fafaf8;color:#888;font-weight:600;justify-content:center;cursor:default}
+.time-blk-sched.clean{background:#E1F5EE;color:#085041;font-size:10px;justify-content:center;cursor:default}
+.time-blk-sched.fold{background:#EEEDFE;color:#3C3489}
+.time-blk-sched.order{background:#fff}
+.time-blk-sched.edited{background:#FFF9E6!important;border-left:3px solid #BA7517}
+.day-body-sched{display:flex;min-height:200px}
+.line-panel-sched{flex:1;overflow:hidden;display:flex;flex-direction:column}
+.line-divider-sched{width:3px;background:#1a1a1a;flex-shrink:0}
 </style>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 </head>
 <body>
 
@@ -138,6 +180,7 @@ input:focus,textarea:focus{outline:none;border-color:#888;background:#fff}
   <div id="app-content" class="hide">
     <div class="tabs">
       <button class="tab on" onclick="st('dash',this)">儀表板</button>
+      <button class="tab" onclick="st('sched',this)">生產排程</button>
       <button class="tab" onclick="st('input',this)" id="input-tab">輸入資料</button>
       <button class="tab" onclick="st('quality',this)">品質分析</button>
       <button class="tab" onclick="st('compare',this)">跨週比較</button>
@@ -166,10 +209,112 @@ input:focus,textarea:focus{outline:none;border-color:#888;background:#fff}
         <div class="card">
           <div class="ct" style="display:flex;justify-content:space-between;align-items:center">
             教育訓練
-            <button class="sbtn-sm" onclick="st('staff',document.querySelector('.tab:nth-child(5)'))">人員技能 →</button>
+            <button class="sbtn-sm" onclick="st('staff',document.querySelector('.tab:nth-child(6)'))">人員技能 →</button>
           </div>
           <div class="info-row" id="train-summary"></div>
           <div style="margin-top:12px;border-top:1px solid #f0f0ee;padding-top:12px" id="train-staff-preview"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 生產排程 -->
+    <div id="tab-sched" class="hide">
+      <div class="sched-steps">
+        <button class="sched-step on" onclick="schedStep(1,this)">① 基本設定</button>
+        <button class="sched-step" onclick="schedStep(2,this)">② 上傳 Excel</button>
+        <button class="sched-step" onclick="schedStep(3,this)">③ 人員出勤</button>
+        <button class="sched-step" onclick="schedStep(4,this)">④ 排程產出</button>
+      </div>
+
+      <!-- 步驟一：基本設定 -->
+      <div id="sched-s1">
+        <div class="card">
+          <div class="ct">週起始日</div>
+          <div class="row2">
+            <div class="fg"><label class="fl">排程週一日期</label><input type="date" id="sched-weekStart" onchange="schedSetWeek()"></div>
+            <div class="fg"><label class="fl">週期顯示</label><div id="sched-weekLabel" style="font-size:13px;color:#1a1a1a;padding:8px 0">請選擇日期</div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="ct">凍庫狀態</div>
+          <div class="row2">
+            <div class="fg"><label class="fl">目前凍庫存量</label><input type="number" id="sched-freezerCur" value="0" min="0" onchange="schedUpdateFreezer()"></div>
+            <div class="fg"><label class="fl">容量上限</label><input type="number" value="2000" readonly style="background:#f5f5f3"></div>
+          </div>
+          <div class="fbar-sched"><div class="ffill-sched" id="sched-ffill" style="width:0%"></div></div>
+          <div style="font-size:10px;color:#888;margin-top:4px;text-align:center" id="sched-fLabel">剩餘 2000 盒</div>
+        </div>
+        <div class="card">
+          <div class="ct">國定假日</div>
+          <div id="sched-holidayBar" style="display:flex;gap:8px;flex-wrap:wrap"></div>
+        </div>
+        <div class="card">
+          <div class="ct">特殊排程指令</div>
+          <div id="sched-overridePanel"><div style="font-size:11px;color:#888">目前沒有特殊指令</div></div>
+          <div style="margin-top:10px"><button class="sbtn-sm" onclick="schedAddOverride()">＋ 新增指令</button></div>
+        </div>
+        <div class="card">
+          <div class="ct">本週重點事項</div>
+          <textarea id="sched-weekNotes" rows="3" placeholder="例如：單做完或凍庫塞不下就摺盒" style="width:100%;padding:8px 11px;font-size:13px;background:#fafaf8;border:1px solid #e0e0e0;border-radius:8px;font-family:inherit"></textarea>
+        </div>
+        <div style="text-align:right;margin-top:8px"><button class="sbtn" onclick="schedStep(2,document.querySelectorAll('.sched-step')[1])">下一步 →</button></div>
+      </div>
+
+      <!-- 步驟二：上傳 Excel -->
+      <div id="sched-s2" class="hide">
+        <div class="card">
+          <div class="ct">上傳覆蓋率 Excel</div>
+          <div class="dz-sched" id="sched-dropZone" ondragover="event.preventDefault();this.style.borderColor='#1a1a1a'" ondragleave="this.style.borderColor='#ddd'" ondrop="schedHandleDrop(event)" onclick="document.getElementById('sched-fileInput').click()">
+            <div style="font-size:20px;margin-bottom:6px">📁</div>
+            <div style="font-size:12px;font-weight:600">拖曳或點擊上傳「成型盒覆蓋率」Excel</div>
+            <div style="font-size:10px;color:#888;margin-top:4px">自動讀取 禮盒表單(W1)</div>
+            <input type="file" id="sched-fileInput" accept=".xlsx,.xls" style="display:none" onchange="schedHandleFile(this.files[0])">
+          </div>
+          <div id="sched-fileStatus" style="margin-top:8px;font-size:11px;display:none"></div>
+        </div>
+        <div id="sched-dataPreview" class="hide">
+          <div class="metrics">
+            <div class="mc"><div class="mc-l">婚禮盒數</div><div class="mc-v" style="color:#1D9E75" id="sched-dWed">0</div></div>
+            <div class="mc"><div class="mc-l">彌月盒數</div><div class="mc-v" style="color:#378ADD" id="sched-dBaby">0</div></div>
+            <div class="mc"><div class="mc-l">節慶盒數</div><div class="mc-v" style="color:#BA7517" id="sched-dFest">0</div></div>
+          </div>
+          <div class="card">
+            <div class="ct">每日到貨盒數</div>
+            <div style="overflow-x:auto"><table><thead id="sched-dailyThead"></thead><tbody id="sched-dailyTbody"></tbody></table></div>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:8px">
+          <button class="sbtn-sm" onclick="schedStep(1,document.querySelectorAll('.sched-step')[0])">← 上一步</button>
+          <button class="sbtn" onclick="schedStep(3,document.querySelectorAll('.sched-step')[2])">下一步 →</button>
+        </div>
+      </div>
+
+      <!-- 步驟三：人員出勤 -->
+      <div id="sched-s3" class="hide">
+        <div class="card">
+          <div class="ct">請假／未排班</div>
+          <div style="overflow-x:auto"><table><thead id="sched-leaveThead"></thead><tbody id="sched-leaveTbody"></tbody></table></div>
+        </div>
+        <div class="card">
+          <div class="ct">生產部學習</div>
+          <div style="overflow-x:auto"><table><thead id="sched-trainThead"></thead><tbody id="sched-trainTbody"></tbody></table></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:8px">
+          <button class="sbtn-sm" onclick="schedStep(2,document.querySelectorAll('.sched-step')[1])">← 上一步</button>
+          <button class="sbtn" onclick="schedGenerateSchedule()">產生排程 →</button>
+        </div>
+      </div>
+
+      <!-- 步驟四：排程產出 -->
+      <div id="sched-s4" class="hide">
+        <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+          <button class="sbtn" onclick="schedCopySchedule()">複製排程</button>
+          <button class="sbtn-sm" onclick="schedStep(3,document.querySelectorAll('.sched-step')[2])">← 修改人員</button>
+        </div>
+        <div id="sched-output"></div>
+        <div class="card hide" id="sched-history-card" style="margin-top:14px">
+          <div class="ct">歷史排程</div>
+          <div id="sched-historyList"></div>
         </div>
       </div>
     </div>
@@ -191,6 +336,7 @@ input:focus,textarea:focus{outline:none;border-color:#888;background:#fff}
         </div>
         <div class="card">
           <div class="ct">產品組裝數量（盒）</div>
+          <div id="plan-compare-hint" class="hide" style="background:#E6F1FB;border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:11px;color:#0C447C;line-height:1.8"></div>
           <div class="row3">
             <div class="fg"><label class="fl">婚禮禮盒</label><input type="number" id="weddingCount" min="0" placeholder="0"></div>
             <div class="fg"><label class="fl">彌月禮盒</label><input type="number" id="babyCount" min="0" placeholder="0"></div>
@@ -437,6 +583,17 @@ function fillInputs(){
   ['totalHours','productionHours','boxFoldingCount','weddingCount','babyCount','festivalCount','badTypes','scrapItem','scrapQty','scrapRate','badCount','badCost','cookieRate','boxScrapRate','trainingHours','trainingNote'].forEach(k=>{
     const el=document.getElementById(k); if(el) el.value=d[k]||'';
   });
+  // 顯示排程計畫數字供對比
+  try{
+    const plan=JSON.parse(localStorage.getItem('sched_plan_'+wkey(curW))||'null');
+    const hint=document.getElementById('plan-compare-hint');
+    if(plan&&hint){
+      hint.classList.remove('hide');
+      hint.innerHTML=`排程計畫：婚禮 <strong>${plan.wedding}</strong> 盒　彌月 <strong>${plan.baby}</strong> 盒　節慶 <strong>${plan.festival}</strong> 盒　合計 <strong>${plan.wedding+plan.baby+plan.festival}</strong> 盒`;
+    } else if(hint){
+      hint.classList.add('hide');
+    }
+  }catch(e){}
 }
 
 // ---- 主要渲染 ----
@@ -452,28 +609,36 @@ function render(){
   const unexplained = round2(Math.max(0, d.totalHours - d.productionHours - d.boxFoldingCount - d.trainingHours));
   const kaido = d.totalHours > 0 ? Math.round(d.productionHours / d.totalHours * 100) : 0;
 
-  // KPI → 產能總覽
+  // KPI → 產能總覽（含計畫對比）
+  const hasPlan = !!(d.plannedWedding || d.plannedBaby || d.plannedFestival);
   const prodItems = [
-    {label:'婚禮', val:d.weddingCount, color:'#1D9E75'},
-    {label:'彌月', val:d.babyCount, color:'#378ADD'},
-    {label:'節慶', val:d.festivalCount, color:'#BA7517'},
+    {label:'婚禮', val:d.weddingCount, plan:d.plannedWedding||0, color:'#1D9E75'},
+    {label:'彌月', val:d.babyCount, plan:d.plannedBaby||0, color:'#378ADD'},
+    {label:'節慶', val:d.festivalCount, plan:d.plannedFestival||0, color:'#BA7517'},
   ];
-  const maxProdVal = Math.max(...prodItems.map(p=>p.val), 1);
+  const plannedTotal = (d.plannedWedding||0)+(d.plannedBaby||0)+(d.plannedFestival||0);
+  const maxProdVal = Math.max(...prodItems.map(p=>Math.max(p.val,p.plan)), 1);
   document.getElementById('prod-overview').innerHTML = `
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px">
-      ${prodItems.map(p=>`
+      ${prodItems.map(p=>{
+        const rate = hasPlan && p.plan > 0 ? Math.round(p.val / p.plan * 100) : 0;
+        const rateColor = rate >= 95 ? '#1D9E75' : rate >= 80 ? '#BA7517' : '#E24B4A';
+        return `
         <div style="text-align:center">
           <div style="font-size:11px;color:#888;margin-bottom:6px">${p.label}禮盒</div>
           <div style="font-size:28px;font-weight:600;color:${p.color}">${p.val.toLocaleString()}</div>
           <div style="font-size:10px;color:#aaa;margin-top:2px">盒</div>
-          <div style="background:#f0f0ee;border-radius:3px;height:4px;margin-top:8px">
+          ${hasPlan && p.plan > 0 ? `<div style="font-size:10px;color:#888;margin-top:4px">計畫 ${p.plan.toLocaleString()}</div><div style="font-size:11px;font-weight:600;color:${rateColor};margin-top:2px">${rate}%</div>` : ''}
+          <div style="background:#f0f0ee;border-radius:3px;height:4px;margin-top:6px;position:relative">
             <div style="height:4px;border-radius:3px;background:${p.color};width:${Math.round(p.val/maxProdVal*100)}%"></div>
+            ${hasPlan && p.plan > 0 ? `<div style="position:absolute;top:-2px;left:${Math.min(Math.round(p.plan/maxProdVal*100),100)}%;width:2px;height:8px;background:#1a1a1a;border-radius:1px" title="計畫 ${p.plan}"></div>` : ''}
           </div>
-        </div>`).join('')}
+        </div>`}).join('')}
     </div>
     <div style="border-top:1px solid #f0f0ee;padding-top:12px;display:flex;gap:20px;flex-wrap:wrap">
-      <div style="font-size:12px;color:#555">總組裝：<strong style="color:#1a1a1a;font-size:16px">${totalBox.toLocaleString()}</strong> 盒</div>
-      <div style="font-size:12px;color:#555">總人時：<strong style="color:#1a1a1a">${d.totalHours}</strong> hr</div>
+      <div style="font-size:12px;color:#555">總組裝：<strong style="color:#1a1a1a;font-size:16px">${totalBox.toLocaleString()}</strong> 盒${hasPlan ? ` <span style="font-size:11px;color:#888">/ 計畫 ${plannedTotal.toLocaleString()}</span>` : ''}</div>
+      ${hasPlan && plannedTotal > 0 ? `<div style="font-size:12px;color:#555">達成率：<strong style="color:${Math.round(totalBox/plannedTotal*100)>=95?'#1D9E75':Math.round(totalBox/plannedTotal*100)>=80?'#BA7517':'#E24B4A'}">${Math.round(totalBox/plannedTotal*100)}%</strong></div>` : ''}
+      <div style="font-size:12px;color:#555">總人時：<strong style="color:#1a1a1a">${d.totalHours}</strong> hr${hasPlan && d.plannedTotalHours ? ` <span style="font-size:11px;color:#888">/ 計畫 ${d.plannedTotalHours}</span>` : ''}</div>
       <div style="font-size:12px;color:#555">稼動率：<strong style="color:#1a1a1a">${kaido}%</strong></div>
       <div style="font-size:12px;color:#555">不良金額：<strong style="color:${d.badCost>5000?'#A32D2D':'#1a1a1a'}">$${(d.badCost||0).toLocaleString()}</strong></div>
     </div>`;
@@ -535,9 +700,10 @@ function render(){
         </svg>
         <div style="font-size:10px;color:#aaa;margin-top:-4px">白線 = 80% 目標</div>
         <div style="margin-top:10px;background:#f5f5f3;border-radius:8px;padding:8px 12px;text-align:left;font-size:11px;color:#555;line-height:1.9">
-          <div>總人時：<strong style="color:#1a1a1a">${d.totalHours} hr</strong></div>
+          <div>總人時：<strong style="color:#1a1a1a">${d.totalHours} hr</strong>${hasPlan && d.plannedTotalHours ? ` <span style="color:#888">/ 計畫 ${d.plannedTotalHours} hr</span>` : ''}</div>
           <div>理論工時：<strong style="color:#378ADD">${theory} hr</strong></div>
           <div>工時差異：<strong style="color:${hrDiff>=0?'#1D9E75':'#E24B4A'}">${hrDiff>=0?'+':''}${hrDiff} hr</strong></div>
+          ${hasPlan && d.plannedProductionHours ? `<div>計畫生產：<strong style="color:#888">${d.plannedProductionHours} hr</strong>${d.plannedFoldHours ? ` 摺盒：${d.plannedFoldHours} hr` : ''}</div>` : ''}
         </div>
       </div>
       <div style="flex:1;min-width:200px">
@@ -597,8 +763,12 @@ function renderCompare(){
   const maxTrain=Math.max(...ws.map(w=>w.d.trainingHours),1);
   const maxDiff=Math.max(...ws.map(w=>Math.abs(round2(calcTheory(w.d)-w.d.productionHours))),1);
   document.getElementById('cmp-prod').innerHTML=ws.map(w=>{
-    const tot=w.d.weddingCount+w.d.babyCount+w.d.festivalCount,p=Math.round(tot/maxProd*100),isc=w.o===curW;
-    return `<div class="cbar"><div class="cbl" style="${isc?'font-weight:700':''}">${w.l}</div><div class="cbb"><div class="cbf" style="width:${Math.max(p,0)}%;background:${isc?'#1D9E75':'#9FE1CB'};color:${isc?'#fff':'#085041'}">${tot>0?tot.toLocaleString()+' 盒':''}</div></div></div>`;
+    const tot=w.d.weddingCount+w.d.babyCount+w.d.festivalCount;
+    const plan=(w.d.plannedWedding||0)+(w.d.plannedBaby||0)+(w.d.plannedFestival||0);
+    const p=Math.round(tot/maxProd*100),isc=w.o===curW;
+    const planP=plan>0?Math.round(plan/maxProd*100):0;
+    const rate=plan>0?Math.round(tot/plan*100):0;
+    return `<div class="cbar"><div class="cbl" style="${isc?'font-weight:700':''}">${w.l}</div><div class="cbb" style="position:relative"><div class="cbf" style="width:${Math.max(p,0)}%;background:${isc?'#1D9E75':'#9FE1CB'};color:${isc?'#fff':'#085041'}">${tot>0?tot.toLocaleString()+' 盒':''}</div>${plan>0?`<div style="position:absolute;top:0;left:${Math.min(planP,100)}%;width:2px;height:100%;background:#1a1a1a;opacity:0.5" title="計畫 ${plan.toLocaleString()} 盒"></div>`:''}${plan>0&&tot>0?`<span style="position:absolute;right:4px;top:2px;font-size:9px;color:#888">${rate}%</span>`:''}</div></div>`;
   }).join('');
   document.getElementById('cmp-eff').innerHTML=ws.map(w=>{
     const e=w.d.totalHours>0?Math.round(calcTheory(w.d)/w.d.totalHours*100):0,isc=w.o===curW;
@@ -617,16 +787,33 @@ function renderCompare(){
 function renderReport(){
   const d=getW(curW),totalBox=d.weddingCount+d.babyCount+d.festivalCount;
   const theory=calcTheory(d),effPct=d.totalHours>0?Math.round(theory/d.totalHours*100):0,diff=round2(theory-d.productionHours);
+  const hasPlan = !!(d.plannedWedding || d.plannedBaby || d.plannedFestival);
+  const plannedTotal = (d.plannedWedding||0)+(d.plannedBaby||0)+(d.plannedFestival||0);
   const warns=[];
   if(diff<-2) warns.push(`實際生產工時超出理論工時 ${Math.abs(diff)} hr，建議確認人員效率或流程問題`);
   if(d.cookieRate*100>1) warns.push(`餅乾不良率 ${pct(d.cookieRate)}，建議追查原因`);
   if(d.boxScrapRate*100>1) warns.push(`禮盒報廢率 ${pct(d.boxScrapRate)}，建議檢討包裝流程`);
   if(d.badCost>5000) warns.push(`本週不良金額 $${d.badCost.toLocaleString()}，建議列入品質會議討論`);
+  if(hasPlan && plannedTotal>0 && totalBox>0 && Math.round(totalBox/plannedTotal*100)<90) warns.push(`計畫達成率 ${Math.round(totalBox/plannedTotal*100)}%，低於 90% 目標`);
+  // 計畫達成（從排程工具推送的數據）
+  let planHtml='';
+  if(hasPlan){
+    const rateW=d.plannedWedding>0?Math.round(d.weddingCount/d.plannedWedding*100)+'%':'-';
+    const rateB=d.plannedBaby>0?Math.round(d.babyCount/d.plannedBaby*100)+'%':'-';
+    const rateT=plannedTotal>0?Math.round(totalBox/plannedTotal*100)+'%':'-';
+    planHtml=`<div style="font-weight:600;color:#1a1a1a;margin-top:10px;margin-bottom:2px">計畫達成</div>
+      計畫盒數：<strong>${plannedTotal.toLocaleString()} 盒</strong>（婚禮 ${d.plannedWedding}、彌月 ${d.plannedBaby}、節慶 ${d.plannedFestival}）<br>
+      達成率：婚禮 <strong>${rateW}</strong>　彌月 <strong>${rateB}</strong>　總計 <strong>${rateT}</strong><br>`;
+    if(d.plannedTotalHours){
+      planHtml+=`計畫人時：<strong>${d.plannedTotalHours} hr</strong>（生產 ${d.plannedProductionHours||0} + 摺盒 ${d.plannedFoldHours||0}）<br>`;
+    }
+  }
   document.getElementById('rpt-content').innerHTML=`
     <div style="font-size:15px;font-weight:600;margin-bottom:1rem">週報摘要 · ${wlabel(curW)}</div>
     <div class="info-row">
       <div style="font-weight:600;color:#1a1a1a;margin-bottom:2px">產能</div>
       本週總組裝：<strong>${totalBox.toLocaleString()} 盒</strong>（婚禮 ${d.weddingCount}、彌月 ${d.babyCount}、節慶 ${d.festivalCount}）<br>
+      ${planHtml}
       <div style="font-weight:600;color:#1a1a1a;margin-top:10px;margin-bottom:2px">工時分析</div>
       總人時：${d.totalHours} hr　生產工時：${d.productionHours} hr　摺盒：${d.boxFoldingCount} hr<br>
       理論工時：${theory} hr　工時效率：${effPct}%　工時差異：${diff>=0?'+':''}${diff} hr<br>
@@ -642,7 +829,18 @@ function renderReport(){
 function exportReport(){
   const d=getW(curW),totalBox=d.weddingCount+d.babyCount+d.festivalCount;
   const theory=calcTheory(d),effPct=d.totalHours>0?Math.round(theory/d.totalHours*100):0,diff=round2(theory-d.productionHours);
-  const text=`【組裝部週報】${wlabel(curW)}\n\n■ 產能\n  總組裝：${totalBox} 盒（婚禮 ${d.weddingCount}、彌月 ${d.babyCount}、節慶 ${d.festivalCount}）\n\n■ 工時分析\n  總人時：${d.totalHours} hr　生產：${d.productionHours} hr　摺盒：${d.boxFoldingCount} hr\n  理論工時：${theory} hr　效率：${effPct}%　差異：${diff>=0?'+':''}${diff} hr\n\n■ 品質\n  不良：${d.badTypes||'—'}　報廢：${d.scrapItem||'—'}（${d.scrapQty} 個）\n  不良數：${d.badCount}　金額：$${d.badCost}　餅乾不良率：${pct(d.cookieRate)}　禮盒報廢率：${pct(d.boxScrapRate)}\n\n■ 教育訓練\n  ${d.trainingHours} hr　${d.trainingNote||'—'}`;
+  // 從 API 讀取計畫盒數
+  const hasPlanE = !!(d.plannedWedding || d.plannedBaby || d.plannedFestival);
+  let planSection='';
+  if(hasPlanE){
+    const planTotal=(d.plannedWedding||0)+(d.plannedBaby||0)+(d.plannedFestival||0);
+    const rateW=d.plannedWedding>0?Math.round(d.weddingCount/d.plannedWedding*100):'-';
+    const rateB=d.plannedBaby>0?Math.round(d.babyCount/d.plannedBaby*100):'-';
+    const rateT=planTotal>0?Math.round(totalBox/planTotal*100):'-';
+    planSection=`\n\n■ 計畫達成\n  計畫：${planTotal} 盒（婚禮 ${d.plannedWedding}、彌月 ${d.plannedBaby}、節慶 ${d.plannedFestival}）\n  達成率：婚禮 ${rateW}%　彌月 ${rateB}%　總計 ${rateT}%`;
+    if(d.plannedTotalHours) planSection+=`\n  計畫人時：${d.plannedTotalHours} hr（生產 ${d.plannedProductionHours||0} + 摺盒 ${d.plannedFoldHours||0}）`;
+  }
+  const text=`【組裝部週報】${wlabel(curW)}\n\n■ 產能\n  總組裝：${totalBox} 盒（婚禮 ${d.weddingCount}、彌月 ${d.babyCount}、節慶 ${d.festivalCount}）${planSection}\n\n■ 工時分析\n  總人時：${d.totalHours} hr　生產：${d.productionHours} hr　摺盒：${d.boxFoldingCount} hr\n  理論工時：${theory} hr　效率：${effPct}%　差異：${diff>=0?'+':''}${diff} hr\n\n■ 品質\n  不良：${d.badTypes||'—'}　報廢：${d.scrapItem||'—'}（${d.scrapQty} 個）\n  不良數：${d.badCount}　金額：$${d.badCost}　餅乾不良率：${pct(d.cookieRate)}　禮盒報廢率：${pct(d.boxScrapRate)}\n\n■ 教育訓練\n  ${d.trainingHours} hr　${d.trainingNote||'—'}`;
   navigator.clipboard.writeText(text).then(()=>alert('已複製！可貼到 Line 或 Email。')).catch(()=>prompt('請手動複製：',text));
 }
 
@@ -652,6 +850,7 @@ function st(name,btn){
   document.getElementById('tab-'+name).classList.remove('hide');
   btn.classList.add('on');
   if(name==='staff') renderStaffTab();
+  if(name==='sched') schedInit();
 }
 function cw(dir){ curW+=dir; render(); }
 
@@ -893,6 +1092,724 @@ async function init(){
   renderTrainPreview();
 }
 init();
+
+// =====================================================
+// ★ 生產排程模組
+// =====================================================
+const SCHED_MEMBERS=[
+  {n:'宥蓉',line:1,st:'檢'},{n:'小武',line:1,st:'封'},{n:'小易',line:1,st:'備'},
+  {n:'小燕',line:1,st:'備'},{n:'雅玲',line:1,st:'入'},{n:'雅淳',line:1,st:'封'},
+  {n:'惠停',line:1,st:'封'},{n:'小林',line:1,st:'入'},
+  {n:'雅卉',line:2,st:'檢'},{n:'杜杜',line:2,st:'備'},{n:'承俊',line:2,st:'封'},
+  {n:'韋忠',line:2,st:'封'},{n:'kiki',line:2,st:'入'},{n:'金妹',line:2,st:'摺'}
+];
+const SCHED_DAYS=['週一','週二','週三','週四','週五'];
+const SCHED_SLOTS=['8:00~8:30','8:30~9:00','9:00~9:30','9:30~10:00','10:00~10:30','10:30~11:00','11:00~11:30','午休','午休','12:30~13:00','13:00~13:30','13:30~14:00','14:00~14:30','14:30~15:00','15:00~15:30','15:30~16:00','16:00~16:30','16:30~17:00'];
+const SCHED_LUNCH=[7,8];
+const SCHED_CLEAN=17;
+const SCHED_FMAX=2000;
+const SCHED_BABY_PP=270;
+const SCHED_BABY_PPH=36;
+const SCHED_WORK_HOURS=7.5;
+
+const SCHED_WED_RATES={
+  '閃耀L':26.2,'閃耀M':25.8,'玫瑰L':28.7,'玫瑰M':34.3,
+  '花園L':21.6,'花園D':19.1,'客製L':24.0,'客製M':29.6
+};
+const SCHED_BOX_MAP={
+  '閃耀':'閃耀','閃耀CP':'閃耀','玫瑰星空':'玫瑰','玫瑰星空_2407':'玫瑰',
+  '花園':'花園','極光之約':'客製','極光':'客製','雅典水藍':'閃耀','雅典':'閃耀','客製':'客製'
+};
+function schedGetWedRate(boxName){
+  const name=String(boxName).trim();
+  let size='L';
+  if(/[Mm]|M1|M款/.test(name))size='M';
+  if(/XS/.test(name))size='M';
+  if(name.includes('D'))size='D';
+  for(const [key,val] of Object.entries(SCHED_BOX_MAP)){
+    if(name.includes(key)) return SCHED_WED_RATES[val+size]||SCHED_WED_RATES[val+'L']||25;
+  }
+  return 25;
+}
+
+const SCHED_BASE_SEQ={
+  0:['台中門市（收週二三）','黑貓（收週二）','拉拉/滾單'],
+  1:['台北門市（收週三四）','黑貓（收週三）','拉拉/滾單'],
+  2:['台中門市（收週四五）','黑貓（收週四）','拉拉/滾單'],
+  3:['台北門市（收週五~下週一）','黑貓（收週五）','拉拉/滾單'],
+  4:['台中門市（收週六日下週一）','黑貓（收週六）','拉拉/滾單']
+};
+const SCHED_PROD_TO_DELIVERY={
+  0:['週三'],1:['週四'],2:['週五'],3:['週六','週日'],4:['週一','週二']
+};
+
+let schedWeekDates=[], schedLeaveD={}, schedTrainD={}, schedExcelData=null;
+let schedHolidays={};
+let schedOverrides=[];
+let schedInited=false;
+
+function schedInit(){
+  if(schedInited) return;
+  schedInited=true;
+  SCHED_MEMBERS.forEach(m=>{
+    schedLeaveD[m.n]={};schedTrainD[m.n]={};
+    for(let i=0;i<5;i++){schedLeaveD[m.n][i]=false;schedTrainD[m.n][i]=false;}
+  });
+  for(let i=0;i<5;i++) schedHolidays[i]={on:false,mode:'defer'};
+  // 預設下週一
+  const today=new Date(),day=today.getDay(),diff2=day===0?1:(day===1?0:8-day);
+  const mon=new Date(today);mon.setDate(today.getDate()+diff2);
+  const inp=document.getElementById('sched-weekStart');
+  inp.value=mon.getFullYear()+'-'+String(mon.getMonth()+1).padStart(2,'0')+'-'+String(mon.getDate()).padStart(2,'0');
+  schedSetWeek();
+  schedRefreshHistoryList();
+}
+
+function schedStep(n,btn){
+  for(let i=1;i<=4;i++){
+    const el=document.getElementById('sched-s'+i);
+    if(el) el.classList.toggle('hide',i!==n);
+  }
+  document.querySelectorAll('.sched-step').forEach(b=>b.classList.remove('on'));
+  if(btn) btn.classList.add('on');
+  if(n===3) schedBuildAttTables();
+  if(n===4) schedRefreshHistoryList();
+}
+
+function schedSd(d){if(!d||!(d instanceof Date)||isNaN(d))return'-';return(d.getMonth()+1)+'/'+d.getDate();}
+function schedFd(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+
+function schedSetWeek(){
+  const v=document.getElementById('sched-weekStart').value;
+  if(!v) return;
+  const parts=v.split('-');
+  const mon=new Date(+parts[0],+parts[1]-1,+parts[2]);
+  schedWeekDates=[];
+  for(let i=0;i<5;i++){const d=new Date(mon);d.setDate(mon.getDate()+i);schedWeekDates.push(d);}
+  const fri=schedWeekDates[4];
+  document.getElementById('sched-weekLabel').textContent=`${schedSd(mon)}（一）– ${schedSd(fri)}（五）`;
+  schedBuildHolidayBar();
+}
+
+function schedUpdateFreezer(){
+  const c=parseInt(document.getElementById('sched-freezerCur').value)||0;
+  const p=Math.min(100,(c/SCHED_FMAX)*100);
+  const f=document.getElementById('sched-ffill');
+  f.style.width=p+'%';f.className='ffill-sched'+(p>80?' full':p>60?' warn':'');
+  document.getElementById('sched-fLabel').textContent=`剩餘 ${SCHED_FMAX-c} 盒（${Math.round(p)}%）`;
+}
+
+function schedBuildHolidayBar(){
+  const bar=document.getElementById('sched-holidayBar');
+  if(!bar||!schedWeekDates.length)return;
+  let h='';
+  schedWeekDates.forEach((d,i)=>{
+    const checked=schedHolidays[i]?.on;
+    h+=`<div style="border:1px solid ${checked?'#1a1a1a':'#ddd'};border-radius:8px;padding:8px 12px;min-width:100px;text-align:center;${checked?'background:#f5f5f3':''}">
+      <div style="font-weight:600;font-size:12px;margin-bottom:4px">${SCHED_DAYS[i]} ${schedSd(d)}</div>
+      <label style="font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px">
+        <input type="checkbox" class="att-cb-sched" ${checked?'checked':''} onchange="schedTogHoliday(${i},this.checked)"> 放假
+      </label>
+    </div>`;
+  });
+  bar.innerHTML=h;
+}
+
+function schedTogHoliday(di,checked){
+  schedHolidays[di].on=checked;
+  SCHED_MEMBERS.forEach(m=>{schedLeaveD[m.n][di]=checked;});
+  schedBuildHolidayBar();
+}
+
+// 特殊指令
+function schedAddOverride(){
+  schedOverrides.push({day:0,line:1,action:'fold',reason:'缺料',note:'',hours:0});
+  schedRenderOverrides();
+}
+function schedRemoveOverride(idx){schedOverrides.splice(idx,1);schedRenderOverrides();}
+function schedUpdateOverride(idx,field,val){
+  if(field==='day'||field==='line') schedOverrides[idx][field]=parseInt(val);
+  else if(field==='hours') schedOverrides[idx][field]=parseFloat(val)||0;
+  else schedOverrides[idx][field]=val;
+}
+function schedRenderOverrides(){
+  const panel=document.getElementById('sched-overridePanel');
+  if(schedOverrides.length===0){panel.innerHTML='<div style="font-size:11px;color:#888">目前沒有特殊指令</div>';return;}
+  let h='';
+  schedOverrides.forEach((o,i)=>{
+    h+=`<div style="display:flex;gap:6px;align-items:center;padding:6px;background:#fafaf8;border:1px solid #eee;border-radius:8px;margin-bottom:6px;flex-wrap:wrap;font-size:12px">
+      <select onchange="schedUpdateOverride(${i},'day',this.value)" style="padding:4px;border-radius:6px;border:1px solid #ddd;font-size:12px">
+        ${SCHED_DAYS.map((d,di)=>`<option value="${di}"${o.day===di?' selected':''}>${d}</option>`).join('')}
+      </select>
+      <select onchange="schedUpdateOverride(${i},'line',this.value)" style="padding:4px;border-radius:6px;border:1px solid #ddd;font-size:12px">
+        <option value="1"${o.line===1?' selected':''}>1線</option><option value="2"${o.line===2?' selected':''}>2線</option>
+      </select>
+      <select onchange="schedUpdateOverride(${i},'action',this.value)" style="padding:4px;border-radius:6px;border:1px solid #ddd;font-size:12px">
+        <option value="fold"${o.action==='fold'?' selected':''}>摺盒</option>
+        <option value="fold_pm"${o.action==='fold_pm'?' selected':''}>下午摺盒</option>
+        <option value="other"${o.action==='other'?' selected':''}>其他</option>
+      </select>
+      <input type="number" step="0.5" min="0" max="7.5" value="${o.hours||0}" style="width:50px;padding:4px;border:1px solid #ddd;border-radius:6px;font-size:12px;text-align:center" onchange="schedUpdateOverride(${i},'hours',this.value)">h
+      <select onchange="schedUpdateOverride(${i},'reason',this.value)" style="padding:4px;border-radius:6px;border:1px solid #ddd;font-size:12px">
+        <option value="缺料"${o.reason==='缺料'?' selected':''}>缺料</option>
+        <option value="備貨"${o.reason==='備貨'?' selected':''}>備貨</option>
+        <option value="凍庫滿"${o.reason==='凍庫滿'?' selected':''}>凍庫滿</option>
+        <option value="其他"${o.reason==='其他'?' selected':''}>其他</option>
+      </select>
+      <input type="text" placeholder="備註" value="${o.note||''}" style="flex:1;min-width:60px;padding:4px;border:1px solid #ddd;border-radius:6px;font-size:12px" oninput="schedUpdateOverride(${i},'note',this.value)">
+      <button onclick="schedRemoveOverride(${i})" style="background:none;border:none;color:#A32D2D;cursor:pointer;font-size:14px">✕</button>
+    </div>`;
+  });
+  panel.innerHTML=h;
+}
+function schedGetOverride(day,line){return schedOverrides.filter(o=>o.day===day&&o.line===line);}
+
+// Excel
+function schedHandleDrop(e){e.preventDefault();schedHandleFile(e.dataTransfer.files[0]);}
+function schedHandleFile(file){
+  if(!file)return;
+  const st2=document.getElementById('sched-fileStatus');st2.style.display='block';
+  st2.innerHTML='<span style="color:#BA7517">讀取中…</span>';
+  const r=new FileReader();
+  r.onload=function(e){
+    try{
+      const wb=XLSX.read(e.target.result,{type:'array',cellDates:true});
+      schedParseW1(wb);
+      st2.innerHTML=`<span style="color:#1D9E75">✓ ${file.name}</span>`;
+    }catch(err){
+      st2.innerHTML=`<span style="color:#A32D2D">✗ ${err.message}</span>`;
+    }
+  };
+  r.readAsArrayBuffer(file);
+}
+
+function schedParseW1(wb){
+  const sn='禮盒表單(W1)';
+  if(!wb.SheetNames.includes(sn)){alert('找不到 禮盒表單(W1)');return;}
+  const ws=wb.Sheets[sn];
+  const rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:null,raw:true});
+  let wTotR=-1,fTotR=-1,bTotR=-1,wDateR=-1;
+  for(let i=0;i<rows.length;i++){
+    const r2=rows[i];if(!r2||r2[0]==null)continue;
+    const c=String(r2[0]).trim();
+    if(c==='婚禮'&&wDateR<0)wDateR=i;
+    if(c==='婚禮總計')wTotR=i;
+    if(c==='年節總計')fTotR=i;
+    if(c==='彌月總計')bTotR=i;
+  }
+  function pn(v){if(v==null)return 0;if(typeof v==='number')return Math.round(v);return Math.round(parseFloat(String(v).replace(/,/g,''))||0);}
+  function getRow(ri){
+    if(ri<0||!rows[ri])return{d:Array(7).fill(0),t:0};
+    const r2=rows[ri],d=[];for(let c=1;c<=7;c++)d.push(pn(r2[c]));
+    return{d,t:pn(r2[8])};
+  }
+  function getDayNames(ri){
+    if(ri<0||!rows[ri+3])return[];
+    const r2=rows[ri+3],n=[];for(let c=1;c<=7;c++)n.push(String(r2[c]||''));return n;
+  }
+  function getDates(ri){
+    if(ri<0||!rows[ri+2])return[];
+    const r2=rows[ri+2],d=[];
+    for(let c=1;c<=7;c++){
+      const v=r2[c];
+      if(v instanceof Date&&!isNaN(v)){d.push(v);}
+      else if(typeof v==='number'){d.push(new Date((v-25569)*864e5));}
+      else if(typeof v==='string'){const m=v.match(/(\d{4})[-\/](\d+)[-\/](\d+)/);d.push(m?new Date(+m[1],m[2]-1,+m[3]):null);}
+      else d.push(null);
+    }return d;
+  }
+  const w=getRow(wTotR),f=getRow(fTotR),b=getRow(bTotR);
+  const dates=getDates(wDateR),dayNames=getDayNames(wDateR);
+  const wBoxTypes=[];
+  if(wDateR>=0&&wTotR>=0){
+    for(let i=wDateR+4;i<wTotR;i++){
+      const r2=rows[i];if(!r2||r2[0]==null)continue;
+      const name=String(r2[0]).trim();
+      if(!name||name.includes('總數')||name.includes('總計'))continue;
+      const daily=[];for(let c=1;c<=7;c++)daily.push(pn(r2[c]));
+      const total=daily.reduce((a,b2)=>a+b2,0);
+      if(total>0) wBoxTypes.push({name,daily,total,rate:schedGetWedRate(name)});
+    }
+  }
+  let bDateR=-1;
+  for(let i=0;i<rows.length;i++){
+    const r2=rows[i];if(!r2||r2[0]==null)continue;
+    if(String(r2[0]).trim()==='彌月'){bDateR=i;break;}
+  }
+  const bBoxTypes=[];
+  if(bDateR>=0&&bTotR>=0){
+    for(let i=bDateR+4;i<bTotR;i++){
+      const r2=rows[i];if(!r2||r2[0]==null)continue;
+      const name=String(r2[0]).trim();
+      if(!name||name.includes('總數')||name.includes('總計'))continue;
+      const daily=[];for(let c=1;c<=7;c++)daily.push(pn(r2[c]));
+      const total=daily.reduce((a,b2)=>a+b2,0);
+      if(total>0) bBoxTypes.push({name,daily,total});
+    }
+  }
+  schedExcelData={w,f,b,dates,dayNames,wBoxTypes,bBoxTypes};
+  document.getElementById('sched-dataPreview').classList.remove('hide');
+  document.getElementById('sched-dWed').textContent=w.t.toLocaleString();
+  document.getElementById('sched-dBaby').textContent=b.t.toLocaleString();
+  document.getElementById('sched-dFest').textContent=f.t.toLocaleString();
+  // Daily table
+  let th='<tr><th style="text-align:left">類別</th>';
+  dates.forEach((d,i)=>{const dn=dayNames[i]||'';th+=`<th>${d?schedSd(d):'-'}<br><span style="font-size:9px">${dn}</span></th>`;});
+  th+='<th>合計</th></tr>';
+  document.getElementById('sched-dailyThead').innerHTML=th;
+  let tb='';
+  [{l:'婚禮',c:'#1D9E75',r:w},{l:'彌月',c:'#378ADD',r:b},{l:'節慶',c:'#BA7517',r:f}].forEach(x=>{
+    tb+=`<tr><td style="font-weight:600;color:${x.c}">${x.l}</td>`;
+    x.r.d.forEach(v=>{tb+=`<td style="font-weight:${v>0?700:400}">${v||'-'}</td>`;});
+    tb+=`<td style="font-weight:700">${x.r.t.toLocaleString()}</td></tr>`;
+  });
+  document.getElementById('sched-dailyTbody').innerHTML=tb;
+  // Set week from dates
+  const first=dates.find(d=>d);
+  if(first){
+    const dow=first.getDay(),back=dow===0?6:dow-1;
+    const mon=new Date(first);mon.setDate(first.getDate()-back);
+    schedWeekDates=[];
+    for(let i=0;i<5;i++){const d=new Date(mon);d.setDate(mon.getDate()+i);schedWeekDates.push(d);}
+    const inp=document.getElementById('sched-weekStart');
+    inp.value=schedFd(mon);
+    document.getElementById('sched-weekLabel').textContent=`${schedSd(mon)}（一）– ${schedSd(schedWeekDates[4])}（五）`;
+    schedBuildHolidayBar();
+  }
+}
+
+// 出勤表
+function schedBuildAttTables(){
+  if(!schedWeekDates.length) return;
+  schedBuildOneTable('sched-leaveThead','sched-leaveTbody',schedLeaveD,'slv');
+  schedBuildOneTable('sched-trainThead','sched-trainTbody',schedTrainD,'str');
+}
+function schedBuildOneTable(theadId,tbodyId,obj,pfx){
+  let h='<tr><th style="text-align:left;min-width:50px">成員</th><th style="min-width:36px">線</th>';
+  schedWeekDates.forEach((d,i)=>{h+=`<th style="min-width:50px">${SCHED_DAYS[i]}<br>${schedSd(d)}</th>`;});
+  h+='</tr>';
+  document.getElementById(theadId).innerHTML=h;
+  let b='';
+  SCHED_MEMBERS.forEach(m=>{
+    const lb=m.line===1?'<span style="font-size:10px;background:#E1F5EE;color:#085041;padding:1px 6px;border-radius:4px">1</span>':'<span style="font-size:10px;background:#E6F1FB;color:#0C447C;padding:1px 6px;border-radius:4px">2</span>';
+    b+=`<tr><td style="font-weight:600;font-size:12px">${m.n}</td><td>${lb}</td>`;
+    for(let i=0;i<5;i++){
+      b+=`<td><input type="checkbox" class="att-cb-sched" data-p="${pfx}" data-n="${m.n}" data-d="${i}" ${obj[m.n][i]?'checked':''} onchange="schedTogAtt(this)"></td>`;
+    }
+    b+='</tr>';
+  });
+  document.getElementById(tbodyId).innerHTML=b;
+}
+function schedTogAtt(cb){
+  const o=cb.dataset.p==='slv'?schedLeaveD:schedTrainD;
+  o[cb.dataset.n][parseInt(cb.dataset.d)]=cb.checked;
+}
+
+// 凍庫出貨
+function schedGetFreezerShipOut(di){
+  if(!schedExcelData||!schedExcelData.dayNames) return 0;
+  const targets=['週二','週三','週四','週五','週六'];
+  const target=targets[di];if(!target) return 0;
+  let total=0;
+  schedExcelData.dayNames.forEach((dn,ci)=>{if(dn.trim()===target) total+=(schedExcelData.b.d[ci]||0);});
+  return total;
+}
+
+// 到貨日佇列
+function schedGetDeliveryQueue(){
+  if(!schedExcelData||!schedExcelData.dayNames) return [];
+  const order=['週三','週四','週五','週六','週日','週一','週二'];
+  const queue=[];
+  order.forEach(dayName=>{
+    const cols=[];
+    schedExcelData.dayNames.forEach((dn,ci)=>{if(dn.trim()===dayName)cols.push(ci);});
+    if(cols.length>0){
+      let wBoxes=0,bBoxes=0;
+      cols.forEach(c=>{wBoxes+=(schedExcelData.w.d[c]||0);bBoxes+=(schedExcelData.b.d[c]||0);});
+      const wDetails=[];
+      if(schedExcelData.wBoxTypes){
+        schedExcelData.wBoxTypes.forEach(bt=>{
+          let qty=0;cols.forEach(c=>{qty+=(bt.daily[c]||0);});
+          if(qty>0) wDetails.push({name:bt.name,qty,rate:bt.rate});
+        });
+      }
+      queue.push({dayName,label:dayName.replace('週',''),cols,wBoxes,bBoxes,wDetails});
+    }
+  });
+  return queue;
+}
+
+function schedBuildOrderPlan(){
+  const plan={};for(let i=0;i<5;i++) plan[i]=[];
+  for(let i=0;i<5;i++){
+    const tasks=SCHED_BASE_SEQ[i]||[];
+    if(!schedHolidays[i]?.on){plan[i].push(...tasks);}
+    else{
+      const mode=schedHolidays[i].mode;let target=-1;
+      if(mode==='advance'){for(let j=i-1;j>=0;j--){if(!schedHolidays[j]?.on){target=j;break;}}}
+      else{for(let j=i+1;j<5;j++){if(!schedHolidays[j]?.on){target=j;break;}}}
+      if(target>=0) plan[target].push(...tasks.map(t=>`${t}【${SCHED_DAYS[i]}${mode==='advance'?'提前':'順延'}】`));
+    }
+  }
+  return plan;
+}
+
+// ====== 排程產生 ======
+function schedGenerateSchedule(){
+  if(!schedExcelData){alert('請先上傳 Excel');return;}
+  const fc=parseInt(document.getElementById('sched-freezerCur').value)||0;
+  const notes=document.getElementById('sched-weekNotes').value;
+  let freezer=fc;
+  const dlvQueue=schedGetDeliveryQueue();
+  let qIdx=0;
+  const dayPlans=[];
+  for(let di=0;di<5;di++){
+    if(schedHolidays[di]?.on){dayPlans.push({holiday:true});continue;}
+    const l1Av=SCHED_MEMBERS.filter(m=>m.line===1&&!schedLeaveD[m.n][di]&&!schedTrainD[m.n][di]);
+    const l2Av=SCHED_MEMBERS.filter(m=>m.line===2&&!schedLeaveD[m.n][di]&&!schedTrainD[m.n][di]);
+    let wRemainHrs=SCHED_WORK_HOURS,wTotalBoxes=0,wDaysLabel=[],wDayCount=0;
+    while(qIdx<dlvQueue.length&&wRemainHrs>0.3&&wDayCount<4){
+      const q=dlvQueue[qIdx];
+      if(q.wBoxes<=0){qIdx++;wDayCount++;continue;}
+      let batchHrs=0;
+      q.wDetails.forEach(d=>{batchHrs+=d.qty/(d.rate*(l1Av.length||1));});
+      if(batchHrs===0){qIdx++;wDayCount++;continue;}
+      if(batchHrs<=wRemainHrs){
+        wTotalBoxes+=q.wBoxes;wRemainHrs-=batchHrs;wDaysLabel.push(q.label);qIdx++;wDayCount++;
+      } else {
+        const ratio=wRemainHrs/batchHrs;
+        const partialBoxes=Math.round(q.wBoxes*ratio);
+        wTotalBoxes+=partialBoxes;wDaysLabel.push(q.label+'(部分)');
+        q.wBoxes-=partialBoxes;q.wDetails.forEach(d=>{d.qty=Math.round(d.qty*(1-ratio));});
+        wRemainHrs=0;
+      }
+    }
+    const wHrs=SCHED_WORK_HOURS-wRemainHrs;
+    const bCap=l2Av.length*SCHED_BABY_PP;
+    dayPlans.push({holiday:false,di,l1Av,l2Av,wTotalBoxes,wHrs,wDaysLabel,noWeddingOrders:wTotalBoxes===0,bCap});
+  }
+  let babyRemain=schedExcelData.b.t,babyTotalProduced=0;
+  const babyCumulative=[];
+  if(schedExcelData.dayNames){
+    const order=['週三','週四','週五','週六','週日','週一','週二'];
+    let cum=0;
+    order.forEach(dayName=>{
+      schedExcelData.dayNames.forEach((dn,ci)=>{
+        if(dn.trim()===dayName){const qty=schedExcelData.b.d[ci]||0;cum+=qty;if(qty>0) babyCumulative.push({dayName,date:schedExcelData.dates[ci],cum});}
+      });
+    });
+  }
+  const orderPlan=schedBuildOrderPlan();
+  let html='';
+  if(notes){
+    html+=`<div style="background:#FAEEDA;border:1px solid #FAC775;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12px">
+      <strong style="color:#633806">本週重點</strong><br>${notes.replace(/\n/g,'<br>')}</div>`;
+  }
+  for(let di=0;di<5;di++){
+    const dp=dayPlans[di];
+    const date=schedWeekDates[di];
+    const l1All=SCHED_MEMBERS.filter(m=>m.line===1);
+    const l2All=SCHED_MEMBERS.filter(m=>m.line===2);
+    const seq=orderPlan[di]||[];
+    if(dp.holiday){
+      html+=`<div class="day-card-sched"><div class="day-hdr-sched"><span>${SCHED_DAYS[di]} ${schedSd(date)}</span><span class="day-hdr-info">休假日</span></div>
+        <div style="padding:24px;text-align:center;color:#888">休假日 — 排程已順延</div></div>`;
+      continue;
+    }
+    const l1Avail=dp.l1Av,l2Avail=dp.l2Av;
+    const wTotalBoxes=dp.wTotalBoxes,wDaysLabel=dp.wDaysLabel,noWeddingOrders=dp.noWeddingOrders;
+    const bCap=dp.bCap,wHrs=dp.wHrs;
+    const dlvLabelW=wDaysLabel.length>0?wDaysLabel.join(''):'-';
+    // 凍庫
+    const shipOut=schedGetFreezerShipOut(di);
+    let shipNote='';
+    if(shipOut>0){freezer=Math.max(0,freezer-shipOut);shipNote=`出貨${shipOut}盒`;}
+    const freeSpace=SCHED_FMAX-freezer;
+    const babyProduced=Math.min(bCap,freeSpace,babyRemain);
+    const foldMorning=(freeSpace<=0)&&(babyRemain>0);
+    freezer+=babyProduced;babyRemain=Math.max(0,babyRemain-babyProduced);
+    const freezerEnd=freezer;
+    const bHrs=l2Avail.length>0?babyProduced/(SCHED_BABY_PPH*l2Avail.length):0;
+    const babyHasOrders=(babyProduced>0);
+    // 婚禮完成到哪天
+    let wDoneDate='';
+    if(wDaysLabel.length>0){
+      const lastLabel=wDaysLabel[wDaysLabel.length-1].replace('(部分)','');
+      const dayMap={'三':'週三','四':'週四','五':'週五','六':'週六','日':'週日','一':'週一','二':'週二'};
+      const targetDayName=dayMap[lastLabel];
+      if(targetDayName&&schedExcelData.dayNames){
+        schedExcelData.dayNames.forEach((dn,ci)=>{
+          if(dn.trim()===targetDayName&&schedExcelData.dates[ci]) wDoneDate=schedSd(schedExcelData.dates[ci]);
+        });
+      }
+    }
+    babyTotalProduced+=babyProduced;
+    let bDoneDate='';
+    for(let bi=0;bi<babyCumulative.length;bi++){
+      if(babyTotalProduced>=babyCumulative[bi].cum){
+        if(babyCumulative[bi].date) bDoneDate=schedSd(babyCumulative[bi].date);
+      } else break;
+    }
+    // 特殊指令
+    const ov1=schedGetOverride(di,1),ov2=schedGetOverride(di,2);
+    const ov1Hrs=ov1.reduce((s,o)=>s+(o.hours||0),0);
+    const ov2Hrs=ov2.reduce((s,o)=>s+(o.hours||0),0);
+    const w1ForceFold=ov1.some(o=>o.action==='fold'&&(!o.hours||o.hours>=SCHED_WORK_HOURS));
+    function ovText(ov){
+      return ov.map(o=>{
+        const act=o.action==='fold'?'摺盒':o.action==='other'?(o.note||'其他'):o.action==='fold_pm'?'下午摺盒':'';
+        const h=o.hours?` ${o.hours}h`:'';return `${act}${h}（${o.reason}）`;
+      }).join(' + ');
+    }
+    const ovReason1=ov1.length>0?ovText(ov1):'';
+    const ovReason2=ov2.length>0?ovText(ov2):'';
+    const b2ForceFold=ov2.some(o=>o.action==='fold'&&(!o.hours||o.hours>=SCHED_WORK_HOURS));
+
+    html+=`<div class="day-card-sched">`;
+    html+=`<div class="day-hdr-sched"><span>${SCHED_DAYS[di]} ${schedSd(date)}</span><span class="day-hdr-info">凍庫：${freezerEnd}/${SCHED_FMAX}${shipNote?' · '+shipNote:''}</span></div>`;
+    html+=`<div class="day-body-sched">`;
+
+    // 1線 婚禮
+    html+=`<div class="line-panel-sched">`;
+    const w1Label=w1ForceFold?`摺盒（${ovReason1}）`:!noWeddingOrders?`做週${dlvLabelW}單 ${wTotalBoxes}盒 · ${wHrs.toFixed(1)}h`:'摺盒';
+    html+=`<div class="line-hdr-sched line-hdr-w">1線 · 婚禮 (${l1Avail.length}人) · ${w1Label}</div>`;
+    html+=`<div class="members-bar-sched">`;
+    l1All.forEach(m=>{
+      const leave=schedLeaveD[m.n][di],train=schedTrainD[m.n][di];
+      html+=`<span class="member-chip-sched${leave?' on-leave':''}${train?' on-train':''}">${m.n}</span>`;
+    });
+    html+=`</div><div class="sta-zone" data-day="${di}" data-line="1" style="padding:0 16px 8px;display:flex;flex-wrap:wrap;gap:4px" ondragover="schedDragOver(event)" ondrop="schedDrop(event)">`;
+    l1Avail.forEach((m,mi)=>{html+=`<span class="station-chip-sched" draggable="true" data-idx="${mi}" ondragstart="schedDragStart(event)" ondragend="schedDragEnd(event)" ondblclick="schedEditStation(this)">${m.n}：${m.st}</span>`;});
+    html+=`</div><div class="time-grid-sched">`;
+    let wSlotCount=0;
+    const ov1Slots=Math.ceil(ov1Hrs/0.5);
+    const wAvailHrs=Math.max(0,SCHED_WORK_HOURS-ov1Hrs);
+    const wActualHrs=Math.min(wHrs,wAvailHrs);
+    const wActualFinish=noWeddingOrders?0:Math.ceil(wActualHrs/0.5);
+    const wFoldHrs=Math.max(0,SCHED_WORK_HOURS-ov1Hrs-wActualHrs);
+    SCHED_SLOTS.forEach((slot,si)=>{
+      if(SCHED_LUNCH.includes(si)){
+        html+=`<div class="time-row-sched"><div class="time-lbl-sched">${si===7?'11:30':'12:00'}</div><div class="time-blk-sched lunch" style="flex:1">午休</div></div>`;return;
+      }
+      if(si===SCHED_CLEAN){
+        html+=`<div class="time-row-sched"><div class="time-lbl-sched">16:30</div><div class="time-blk-sched clean" style="flex:1">打掃</div></div>`;return;
+      }
+      // （contenteditable 僅加在一般時段）
+      wSlotCount++;
+      let content='',cls='order';
+      if(w1ForceFold){cls='fold';if(si===0)content=ovReason1;}
+      else if(wSlotCount<=ov1Slots&&ov1.length>0){cls=ov1[0].action==='fold'?'fold':'order';if(wSlotCount===1)content=ovReason1;}
+      else if(noWeddingOrders){cls='fold';if(wSlotCount===ov1Slots+1||si===0)content=`摺盒 ${wFoldHrs.toFixed(1)}h`;}
+      else if(wSlotCount<=ov1Slots+wActualFinish){
+        const orderSlot=wSlotCount-ov1Slots;
+        if(orderSlot===1) content=`做週${dlvLabelW}單 ${wTotalBoxes}盒 · ${wActualHrs.toFixed(1)}h → 完成到${wDoneDate||'?'}`;
+        else if(orderSlot===2&&seq[0]) content=seq[0];
+        else if(orderSlot===3&&seq[1]) content=seq[1];
+        else if(orderSlot===4&&seq[2]) content=seq[2];
+      } else {cls='fold';if(wSlotCount===ov1Slots+wActualFinish+1&&wFoldHrs>0)content=`摺盒 ${wFoldHrs.toFixed(1)}h`;}
+      html+=`<div class="time-row-sched"><div class="time-lbl-sched">${slot.split('~')[0]}</div><div class="time-blk-sched ${cls}" style="flex:1" contenteditable="true" oninput="this.classList.add('edited')">${content}</div></div>`;
+    });
+    html+=`</div></div>`;
+
+    // 分隔
+    html+=`<div class="line-divider-sched"></div>`;
+
+    // 2線 彌月
+    html+=`<div class="line-panel-sched">`;
+    const babyLabel=babyHasOrders?`做單 ${babyProduced}盒 · ${bHrs.toFixed(1)}h`:'摺盒';
+    html+=`<div class="line-hdr-sched line-hdr-b">2線 · 彌月 (${l2Avail.length}人) · ${babyLabel}${foldMorning?' (凍庫滿→摺盒)':''}</div>`;
+    html+=`<div class="members-bar-sched">`;
+    l2All.forEach(m=>{
+      const leave=schedLeaveD[m.n][di],train=schedTrainD[m.n][di];
+      html+=`<span class="member-chip-sched${leave?' on-leave':''}${train?' on-train':''}">${m.n}</span>`;
+    });
+    html+=`</div><div class="sta-zone" data-day="${di}" data-line="2" style="padding:0 16px 8px;display:flex;flex-wrap:wrap;gap:4px" ondragover="schedDragOver(event)" ondrop="schedDrop(event)">`;
+    l2Avail.forEach((m,mi)=>{html+=`<span class="station-chip-sched" draggable="true" data-idx="${mi}" ondragstart="schedDragStart(event)" ondragend="schedDragEnd(event)" ondblclick="schedEditStation(this)">${m.n}：${m.st}</span>`;});
+    html+=`</div><div class="time-grid-sched">`;
+    let bSlotCount=0;
+    const ov2Slots=Math.ceil(ov2Hrs/0.5);
+    const bAvailHrs=Math.max(0,SCHED_WORK_HOURS-ov2Hrs);
+    const bActualHrs=Math.min(bHrs,bAvailHrs);
+    const bActualFinish=!babyHasOrders?0:Math.ceil(bActualHrs/0.5);
+    const bFoldHrs=Math.max(0,SCHED_WORK_HOURS-ov2Hrs-bActualHrs);
+    SCHED_SLOTS.forEach((slot,si)=>{
+      if(SCHED_LUNCH.includes(si)){
+        html+=`<div class="time-row-sched"><div class="time-lbl-sched">${si===7?'11:30':'12:00'}</div><div class="time-blk-sched lunch" style="flex:1">午休</div></div>`;return;
+      }
+      if(si===SCHED_CLEAN){
+        html+=`<div class="time-row-sched"><div class="time-lbl-sched">16:30</div><div class="time-blk-sched clean" style="flex:1">打掃</div></div>`;return;
+      }
+      // （contenteditable 僅加在一般時段）
+      bSlotCount++;
+      let content='',cls='order';
+      if(b2ForceFold){cls='fold';if(si===0)content=ovReason2;}
+      else if(bSlotCount<=ov2Slots&&ov2.length>0){cls=ov2[0].action==='fold'?'fold':'order';if(bSlotCount===1)content=ovReason2;}
+      else if(!babyHasOrders){cls='fold';if(bSlotCount===ov2Slots+1||si===0)content=`摺盒 ${bFoldHrs.toFixed(1)}h`;}
+      else if(foldMorning&&bSlotCount<=ov2Slots+Math.ceil(3.5/0.5)){cls='fold';if(bSlotCount===ov2Slots+1)content='摺盒（凍庫滿）';}
+      else if(bSlotCount<=ov2Slots+bActualFinish){
+        const orderSlot=bSlotCount-ov2Slots;
+        if(orderSlot===1) content=`做單 ${babyProduced}盒 · ${bActualHrs.toFixed(1)}h → 完成到${bDoneDate||'?'}`;
+      } else {cls='fold';if(bSlotCount===ov2Slots+bActualFinish+1&&bFoldHrs>0)content=`摺盒 ${bFoldHrs.toFixed(1)}h`;}
+      html+=`<div class="time-row-sched"><div class="time-lbl-sched">${slot.split('~')[0]}</div><div class="time-blk-sched ${cls}" style="flex:1" contenteditable="true" oninput="this.classList.add('edited')">${content}</div></div>`;
+    });
+    html+=`</div></div>`;
+    html+=`</div></div>`; // day-body + day-card
+  }
+  document.getElementById('sched-output').innerHTML=html;
+  schedStep(4,document.querySelectorAll('.sched-step')[3]);
+  schedSaveSchedule();
+
+  // 存計畫盒數到 localStorage，供週報和輸入資料使用
+  const planKey='sched_plan_'+wkey(curW);
+  try{
+    // 也存一份用日期 key
+    const dateKey='sched_plan_date_'+schedFd(schedWeekDates[0]);
+    const planData={
+      wedding:schedExcelData.w.t||0,
+      baby:schedExcelData.b.t||0,
+      festival:schedExcelData.f.t||0,
+      weekStart:schedFd(schedWeekDates[0])
+    };
+    localStorage.setItem(planKey,JSON.stringify(planData));
+    localStorage.setItem(dateKey,JSON.stringify(planData));
+  }catch(e){}
+}
+
+// ---- 站點拖曳 / 編輯 ----
+let schedDraggedChip=null;
+function schedDragStart(e){
+  schedDraggedChip=e.target;
+  e.target.classList.add('dragging');
+  e.dataTransfer.effectAllowed='move';
+  e.dataTransfer.setData('text/plain',e.target.textContent);
+}
+function schedDragEnd(e){
+  e.target.classList.remove('dragging');
+  document.querySelectorAll('.station-chip-sched.drag-over').forEach(el=>el.classList.remove('drag-over'));
+  schedDraggedChip=null;
+}
+function schedDragOver(e){
+  e.preventDefault();
+  e.dataTransfer.dropEffect='move';
+  const target=e.target.closest('.station-chip-sched');
+  if(target&&target!==schedDraggedChip){
+    document.querySelectorAll('.station-chip-sched.drag-over').forEach(el=>el.classList.remove('drag-over'));
+    target.classList.add('drag-over');
+  }
+}
+function schedDrop(e){
+  e.preventDefault();
+  if(!schedDraggedChip) return;
+  const zone=e.currentTarget;
+  const target=e.target.closest('.station-chip-sched');
+  if(target&&target!==schedDraggedChip){
+    // 交換兩個 chip 的內容
+    const tmp=schedDraggedChip.textContent;
+    schedDraggedChip.textContent=target.textContent;
+    target.textContent=tmp;
+  } else if(!target){
+    // 拖到空白處，移到最後
+    zone.appendChild(schedDraggedChip);
+  }
+  document.querySelectorAll('.station-chip-sched.drag-over').forEach(el=>el.classList.remove('drag-over'));
+}
+function schedEditStation(chip){
+  const cur=chip.textContent;
+  const input=prompt('修改站點（格式：姓名：站點）',cur);
+  if(input&&input.trim()) chip.textContent=input.trim();
+}
+
+// 複製排程
+function schedCopySchedule(){
+  const el=document.getElementById('sched-output');
+  if(!el.innerHTML){alert('請先產生排程');return;}
+  let text='';
+  el.querySelectorAll('.day-card-sched').forEach(card=>{
+    const hdr=card.querySelector('.day-hdr-sched');
+    text+='\n'+hdr.textContent.trim()+'\n';
+    card.querySelectorAll('.line-panel-sched').forEach(panel=>{
+      const lh=panel.querySelector('.line-hdr-sched');
+      if(lh) text+='  '+lh.textContent.trim()+'\n';
+      panel.querySelectorAll('.station-chip-sched').forEach(ch=>{text+='    '+ch.textContent.trim()+'\n';});
+      panel.querySelectorAll('.time-row-sched').forEach(row=>{
+        const label=row.querySelector('.time-lbl-sched')?.textContent||'';
+        const content=row.querySelector('.time-blk-sched')?.textContent||'';
+        if(content.trim()) text+='    '+label.trim()+' '+content.trim()+'\n';
+      });
+    });
+  });
+  navigator.clipboard.writeText(text).then(()=>alert('已複製到剪貼簿')).catch(()=>prompt('請手動複製：',text));
+}
+
+// localStorage 歷史排程
+const SCHED_LS_KEY='cupetit_schedules';
+let schedCurrentHistKey='';
+
+function schedGetHistory(){
+  try{return JSON.parse(localStorage.getItem(SCHED_LS_KEY)||'{}');}catch(e){return {};}
+}
+
+function schedSaveSchedule(){
+  if(!schedWeekDates.length) return;
+  const key=schedFd(schedWeekDates[0]);
+  const html=document.getElementById('sched-output').innerHTML;
+  if(!html) return;
+  const hist=schedGetHistory();
+  let sumProdHrs=0,sumFoldHrs=0;
+  if(schedExcelData){
+    const wTotal=schedExcelData.w.t||0,bTotal=schedExcelData.b.t||0;
+    const l1=SCHED_MEMBERS.filter(m=>m.line===1).length;
+    const l2=SCHED_MEMBERS.filter(m=>m.line===2).length;
+    if(l1>0) sumProdHrs+=wTotal/(25*l1);
+    if(l2>0) sumProdHrs+=bTotal/(36*l2);
+    const workDays=schedWeekDates.filter((_,i)=>!schedHolidays[i]?.on).length;
+    const totalAvailHrs=workDays*SCHED_WORK_HOURS;
+    sumFoldHrs=Math.max(0,(l1+l2)*totalAvailHrs-sumProdHrs*(l1+l2)/Math.max(l1,1));
+  }
+  hist[key]={
+    html,savedAt:new Date().toISOString(),
+    weekLabel:`${schedSd(schedWeekDates[0])} ~ ${schedSd(schedWeekDates[4])}`,
+    summary:{wBoxes:schedExcelData?schedExcelData.w.t:0,bBoxes:schedExcelData?schedExcelData.b.t:0,fBoxes:schedExcelData?schedExcelData.f.t:0,totalHrs:sumProdHrs+sumFoldHrs,foldHrs:sumFoldHrs}
+  };
+  localStorage.setItem(SCHED_LS_KEY,JSON.stringify(hist));
+  schedCurrentHistKey=key;
+  schedRefreshHistoryList();
+}
+
+function schedLoadSchedule(key){
+  const hist=schedGetHistory();
+  const data=hist[key];
+  if(!data){alert('找不到排程');return;}
+  schedCurrentHistKey=key;
+  document.getElementById('sched-output').innerHTML=data.html;
+  schedStep(4,document.querySelectorAll('.sched-step')[3]);
+}
+
+function schedDeleteSchedule(key){
+  if(!confirm(`確定刪除 ${key} 的排程？`)) return;
+  const hist=schedGetHistory();
+  delete hist[key];
+  localStorage.setItem(SCHED_LS_KEY,JSON.stringify(hist));
+  schedRefreshHistoryList();
+  document.getElementById('sched-output').innerHTML='<div style="text-align:center;color:#888;padding:20px">排程已刪除</div>';
+}
+
+function schedRefreshHistoryList(){
+  const card=document.getElementById('sched-history-card');
+  const list=document.getElementById('sched-historyList');
+  if(!list) return;
+  const hist=schedGetHistory();
+  const keys=Object.keys(hist).sort().reverse();
+  if(keys.length===0){card.classList.add('hide');return;}
+  card.classList.remove('hide');
+  list.innerHTML=keys.map(k=>{
+    const d=hist[k];
+    return `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #f0f0ee;font-size:12px">
+      <a href="#" onclick="schedLoadSchedule('${k}');return false" style="color:#378ADD;text-decoration:none;font-weight:500">${d.weekLabel||k}</a>
+      <button class="sbtn-sm" style="font-size:10px;padding:3px 8px;background:#fff;color:#A32D2D;border:1px solid #ddd" onclick="schedDeleteSchedule('${k}')">刪除</button>
+    </div>`;
+  }).join('');
+}
 </script>
 </body>
 </html>
