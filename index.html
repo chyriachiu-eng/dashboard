@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>組裝部週產能儀表板</title>
+<title>蝯鋆�券\梁Ｚ賢\銵冽�</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang TC','Microsoft JhengHei',sans-serif;background:#f5f5f3;color:#1a1a1a;font-size:14px}
@@ -75,14 +75,14 @@ input:focus,textarea:focus{outline:none;border-color:#888;background:#fff}
 .hr-bar-val{font-size:12px;font-weight:600;color:#1a1a1a}
 .hr-bar-rect{width:44px;border-radius:3px 3px 0 0}
 .hr-bar-lbl{font-size:10px;color:#888;text-align:center;max-width:64px;line-height:1.4}
-/* 密碼 modal */
+/* 撖蝣� modal */
 .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;z-index:100}
 .modal{background:#fff;border-radius:14px;padding:28px 32px;width:320px;text-align:center}
 .modal h3{font-size:15px;font-weight:600;margin-bottom:6px}
 .modal p{font-size:12px;color:#888;margin-bottom:18px}
 .modal input{margin-bottom:12px;text-align:center;letter-spacing:2px}
 .modal-err{font-size:12px;color:#A32D2D;margin-top:8px;min-height:18px}
-/* 載入動畫 */
+/* 頛�亙�� */
 .loading{text-align:center;padding:60px;color:#888;font-size:13px}
 .admin-badge{font-size:11px;background:#E1F5EE;color:#085041;padding:3px 10px;border-radius:6px;margin-left:8px;font-weight:500}
 .skill-tag{display:inline-block;font-size:11px;padding:2px 9px;border-radius:6px;font-weight:600;white-space:nowrap}
@@ -144,72 +144,72 @@ input:focus,textarea:focus{outline:none;border-color:#888;background:#fff}
 </head>
 <body>
 
-<!-- 密碼 Modal -->
+<!-- 撖蝣� Modal -->
 <div class="modal-bg hide" id="pwd-modal">
   <div class="modal">
-    <h3>輸入管理密碼</h3>
-    <p>只有管理員可以輸入與儲存資料</p>
-    <input type="password" id="pwd-input" placeholder="輸入密碼" onkeydown="if(event.key==='Enter')checkPwd()">
+    <h3>頛詨亦恣�撖蝣�</h3>
+    <p>�芣蝞∠�∪臭誑頛詨亥�脣�鞈�</p>
+    <input type="password" id="pwd-input" placeholder="頛詨亙�蝣�" onkeydown="if(event.key==='Enter')checkPwd()">
     <br>
-    <button class="sbtn" style="width:100%" onclick="checkPwd()">確認</button>
+    <button class="sbtn" style="width:100%" onclick="checkPwd()">蝣箄�</button>
     <div class="modal-err" id="pwd-err"></div>
-    <div style="margin-top:12px"><a href="#" onclick="closePwdModal()" style="font-size:12px;color:#888">取消</a></div>
+    <div style="margin-top:12px"><a href="#" onclick="closePwdModal()" style="font-size:12px;color:#888">�瘨</a></div>
   </div>
 </div>
 
 <div class="topbar">
   <div>
     <div class="topbar-title">
-      組裝部週產能儀表板
-      <span class="admin-badge hide" id="admin-badge">管理員模式</span>
+      蝯鋆�券\梁Ｚ賢\銵冽�
+      <span class="admin-badge hide" id="admin-badge">蝞∠�⊥芋撘</span>
     </div>
-    <div class="topbar-sub" id="sstatus">連線中…</div>
+    <div class="topbar-sub" id="sstatus">�\��銝凌\�</div>
   </div>
   <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-    <button class="sbtn-sm" id="login-btn" onclick="showPwdModal()">管理員登入</button>
+    <button class="sbtn-sm" id="login-btn" onclick="showPwdModal()">蝞∠�∠餃�</button>
     <div class="wknav">
-      <button onclick="cw(-1)">‹ 上週</button>
+      <button onclick="cw(-1)">�\� 銝�\�</button>
       <div class="wklabel" id="wklabel"></div>
-      <button onclick="cw(1)">下週 ›</button>
+      <button onclick="cw(1)">銝�\� �\�</button>
     </div>
   </div>
 </div>
 
 <div class="main">
-  <div id="loading-screen" class="loading">資料載入中，請稍候…</div>
+  <div id="loading-screen" class="loading">鞈�頛�乩葉嚗隢蝔�\�\�</div>
   <div id="app-content" class="hide">
     <div class="tabs">
-      <button class="tab on" onclick="st('dash',this)">儀表板</button>
-      <button class="tab" onclick="st('sched',this)">生產排程</button>
-      <button class="tab" onclick="st('input',this)" id="input-tab">輸入資料</button>
-      <button class="tab" onclick="st('quality',this)">品質分析</button>
-      <button class="tab" onclick="st('compare',this)">跨週比較</button>
-      <button class="tab" onclick="st('staff',this)">人員技能</button>
-      <button class="tab" onclick="st('report',this)">週報告</button>
+      <button class="tab on" onclick="st('dash',this)">�\銵冽�</button>
+      <button class="tab" onclick="st('sched',this)">��Ｘ蝔</button>
+      <button class="tab" onclick="st('input',this)" id="input-tab">頛詨亥��</button>
+      <button class="tab" onclick="st('quality',this)">�鞈芸�</button>
+      <button class="tab" onclick="st('compare',this)">頝券\望�頛</button>
+      <button class="tab" onclick="st('staff',this)">鈭箏⊥\��</button>
+      <button class="tab" onclick="st('report',this)">�\勗 勗</button>
     </div>
 
-    <!-- 儀表板 -->
+    <!-- �\銵冽� -->
     <div id="tab-dash">
-      <!-- 產能一眼看板 -->
+      <!-- �Ｚ賭�\�潛�� -->
       <div class="card" style="margin-bottom:14px">
-        <div class="ct">本週產能總覽</div>
+        <div class="ct">�祇\梁Ｚ賜蜇閬�</div>
         <div id="prod-overview"></div>
       </div>
-      <!-- 工時流向分析 -->
+      <!-- 撌交瘚��� -->
       <div class="card">
-        <div class="ct">工時流向分析</div>
-        <div class="std-note">標準：婚禮 <strong>25 盒／人時</strong>　彌月 <strong>35 盒／人時</strong>　節慶 不納入<br>工時效率 ＝ 理論工時 ÷ 總人時　｜　未解釋工時 ＝ 總人時 − 理論工時 − 生產工時 − 摺盒工時</div>
+        <div class="ct">撌交瘚���</div>
+        <div class="std-note">璅皞嚗憍蝳� <strong>25 �嚗鈭箸</strong>�\\敶� <strong>35 �嚗鈭箸</strong>�\\蝭\�� 銝蝝��<br>撌交�� 嚗 �隢撌交 繩 蝮賭犖��\\嚚�\\�芾圾�撌交 嚗 蝮賭犖� � �隢撌交 � ��Ｗ極� � �箇撌交</div>
         <div id="hr-flow"></div>
       </div>
       <div class="two">
         <div class="card">
-          <div class="ct">品質概況</div>
+          <div class="ct">�鞈芣�瘜</div>
           <div class="info-row" id="quality-summary"></div>
         </div>
         <div class="card">
           <div class="ct" style="display:flex;justify-content:space-between;align-items:center">
-            教育訓練
-            <button class="sbtn-sm" onclick="st('staff',document.querySelector('.tab:nth-child(6)'))">人員技能 →</button>
+            ��脰�蝺�
+            <button class="sbtn-sm" onclick="st('staff',document.querySelector('.tab:nth-child(6)'))">鈭箏⊥\�� �</button>
           </div>
           <div class="info-row" id="train-summary"></div>
           <div style="margin-top:12px;border-top:1px solid #f0f0ee;padding-top:12px" id="train-staff-preview"></div>
@@ -217,232 +217,232 @@ input:focus,textarea:focus{outline:none;border-color:#888;background:#fff}
       </div>
     </div>
 
-    <!-- 生產排程 -->
+    <!-- ��Ｘ蝔 -->
     <div id="tab-sched" class="hide">
       <div class="sched-steps">
-        <button class="sched-step on" onclick="schedStep(1,this)">① 基本設定</button>
-        <button class="sched-step" onclick="schedStep(2,this)">② 上傳 Excel</button>
-        <button class="sched-step" onclick="schedStep(3,this)">③ 人員出勤</button>
-        <button class="sched-step" onclick="schedStep(4,this)">④ 排程產出</button>
+        <button class="sched-step on" onclick="schedStep(1,this)">�  �箸祈身摰</button>
+        <button class="sched-step" onclick="schedStep(2,this)">�� 銝�� Excel</button>
+        <button class="sched-step" onclick="schedStep(3,this)">�� 鈭箏∪箏�</button>
+        <button class="sched-step" onclick="schedStep(4,this)">�� �蝔�Ｗ�</button>
       </div>
 
-      <!-- 步驟一：基本設定 -->
+      <!-- 甇仿�銝\嚗�箸祈身摰 -->
       <div id="sched-s1">
         <div class="card">
-          <div class="ct">週起始日</div>
+          <div class="ct">�\梯絲憪��</div>
           <div class="row2">
-            <div class="fg"><label class="fl">排程週一日期</label><input type="date" id="sched-weekStart" onchange="schedSetWeek()"></div>
-            <div class="fg"><label class="fl">週期顯示</label><div id="sched-weekLabel" style="font-size:13px;color:#1a1a1a;padding:8px 0">請選擇日期</div></div>
+            <div class="fg"><label class="fl">�蝔�\曹�\�交</label><input type="date" id="sched-weekStart" onchange="schedSetWeek()"></div>
+            <div class="fg"><label class="fl">�\望憿舐內</label><div id="sched-weekLabel" style="font-size:13px;color:#1a1a1a;padding:8px 0">隢�豢�交</div></div>
           </div>
         </div>
         <div class="card">
-          <div class="ct">凍庫狀態</div>
+          <div class="ct">�摨怎\�</div>
           <div class="row2">
-            <div class="fg"><label class="fl">目前凍庫存量</label><input type="number" id="sched-freezerCur" value="0" min="0" onchange="schedUpdateFreezer()"></div>
-            <div class="fg"><label class="fl">容量上限</label><input type="number" value="2000" readonly style="background:#f5f5f3"></div>
+            <div class="fg"><label class="fl">�桀�摨怠��</label><input type="number" id="sched-freezerCur" value="0" min="0" onchange="schedUpdateFreezer()"></div>
+            <div class="fg"><label class="fl">摰寥銝�</label><input type="number" value="2000" readonly style="background:#f5f5f3"></div>
           </div>
           <div class="fbar-sched"><div class="ffill-sched" id="sched-ffill" style="width:0%"></div></div>
-          <div style="font-size:10px;color:#888;margin-top:4px;text-align:center" id="sched-fLabel">剩餘 2000 盒</div>
+          <div style="font-size:10px;color:#888;margin-top:4px;text-align:center" id="sched-fLabel">�拚� 2000 �</div>
         </div>
         <div class="card">
-          <div class="ct">國定假日</div>
+          <div class="ct">�摰���</div>
           <div id="sched-holidayBar" style="display:flex;gap:8px;flex-wrap:wrap"></div>
         </div>
         <div class="card">
-          <div class="ct">特殊排程指令</div>
-          <div id="sched-overridePanel"><div style="font-size:11px;color:#888">目前沒有特殊指令</div></div>
-          <div style="margin-top:10px"><button class="sbtn-sm" onclick="schedAddOverride()">＋ 新增指令</button></div>
+          <div class="ct">�寞��蝔�隞�</div>
+          <div id="sched-overridePanel"><div style="font-size:11px;color:#888">�桀瘝��寞��隞�</div></div>
+          <div style="margin-top:10px"><button class="sbtn-sm" onclick="schedAddOverride()">嚗 �啣��隞�</button></div>
         </div>
         <div class="card">
-          <div class="ct">本週重點事項</div>
-          <textarea id="sched-weekNotes" rows="3" placeholder="例如：單做完或凍庫塞不下就摺盒" style="width:100%;padding:8px 11px;font-size:13px;background:#fafaf8;border:1px solid #e0e0e0;border-radius:8px;font-family:inherit"></textarea>
+          <div class="ct">�祇\梢暺鈭� </div>
+          <textarea id="sched-weekNotes" rows="3" placeholder="靘憒嚗�桀摰��摨怠�銝銝撠望箇" style="width:100%;padding:8px 11px;font-size:13px;background:#fafaf8;border:1px solid #e0e0e0;border-radius:8px;font-family:inherit"></textarea>
         </div>
-        <div style="text-align:right;margin-top:8px"><button class="sbtn" onclick="schedStep(2,document.querySelectorAll('.sched-step')[1])">下一步 →</button></div>
+        <div style="text-align:right;margin-top:8px"><button class="sbtn" onclick="schedStep(2,document.querySelectorAll('.sched-step')[1])">銝銝\甇� �</button></div>
       </div>
 
-      <!-- 步驟二：上傳 Excel -->
+      <!-- 甇仿�鈭嚗銝�� Excel -->
       <div id="sched-s2" class="hide">
         <div class="card">
-          <div class="ct">上傳覆蓋率 Excel</div>
+          <div class="ct">銝�唾��� Excel</div>
           <div class="dz-sched" id="sched-dropZone" ondragover="event.preventDefault();this.style.borderColor='#1a1a1a'" ondragleave="this.style.borderColor='#ddd'" ondrop="schedHandleDrop(event)" onclick="document.getElementById('sched-fileInput').click()">
-            <div style="font-size:20px;margin-bottom:6px">📁</div>
-            <div style="font-size:12px;font-weight:600">拖曳或點擊上傳「成型盒覆蓋率」Excel</div>
-            <div style="font-size:10px;color:#888;margin-top:4px">自動讀取 禮盒表單(W1)</div>
+            <div style="font-size:20px;margin-bottom:6px">�</div>
+            <div style="font-size:12px;font-weight:600">��單暺�銝�喋\���閬���\Excel</div>
+            <div style="font-size:10px;color:#888;margin-top:4px">�芸霈\� 蝳桃銵典�(W1)</div>
             <input type="file" id="sched-fileInput" accept=".xlsx,.xls" style="display:none" onchange="schedHandleFile(this.files[0])">
           </div>
           <div id="sched-fileStatus" style="margin-top:8px;font-size:11px;display:none"></div>
         </div>
         <div id="sched-dataPreview" class="hide">
           <div class="metrics">
-            <div class="mc"><div class="mc-l">婚禮盒數</div><div class="mc-v" style="color:#1D9E75" id="sched-dWed">0</div></div>
-            <div class="mc"><div class="mc-l">彌月盒數</div><div class="mc-v" style="color:#378ADD" id="sched-dBaby">0</div></div>
-            <div class="mc"><div class="mc-l">節慶盒數</div><div class="mc-v" style="color:#BA7517" id="sched-dFest">0</div></div>
+            <div class="mc"><div class="mc-l">憍蝳桃��</div><div class="mc-v" style="color:#1D9E75" id="sched-dWed">0</div></div>
+            <div class="mc"><div class="mc-l">敶����</div><div class="mc-v" style="color:#378ADD" id="sched-dBaby">0</div></div>
+            <div class="mc"><div class="mc-l">蝭\�嗥��</div><div class="mc-v" style="color:#BA7517" id="sched-dFest">0</div></div>
           </div>
           <div class="card">
-            <div class="ct">每日到貨盒數</div>
+            <div class="ct">瘥�亙啗疏���</div>
             <div style="overflow-x:auto"><table><thead id="sched-dailyThead"></thead><tbody id="sched-dailyTbody"></tbody></table></div>
           </div>
         </div>
         <div style="display:flex;justify-content:space-between;margin-top:8px">
-          <button class="sbtn-sm" onclick="schedStep(1,document.querySelectorAll('.sched-step')[0])">← 上一步</button>
-          <button class="sbtn" onclick="schedStep(3,document.querySelectorAll('.sched-step')[2])">下一步 →</button>
+          <button class="sbtn-sm" onclick="schedStep(1,document.querySelectorAll('.sched-step')[0])">� 銝銝\甇�</button>
+          <button class="sbtn" onclick="schedStep(3,document.querySelectorAll('.sched-step')[2])">銝銝\甇� �</button>
         </div>
       </div>
 
-      <!-- 步驟三：人員出勤 -->
+      <!-- 甇仿�銝嚗鈭箏∪箏� -->
       <div id="sched-s3" class="hide">
         <div class="card">
-          <div class="ct">請假／未排班</div>
+          <div class="ct">隢�嚗�芣��</div>
           <div style="overflow-x:auto"><table><thead id="sched-leaveThead"></thead><tbody id="sched-leaveTbody"></tbody></table></div>
         </div>
         <div class="card">
-          <div class="ct">生產部學習</div>
+          <div class="ct">��ａ典飛蝧</div>
           <div style="overflow-x:auto"><table><thead id="sched-trainThead"></thead><tbody id="sched-trainTbody"></tbody></table></div>
         </div>
         <div style="display:flex;justify-content:space-between;margin-top:8px">
-          <button class="sbtn-sm" onclick="schedStep(2,document.querySelectorAll('.sched-step')[1])">← 上一步</button>
-          <button class="sbtn" onclick="schedGenerateSchedule()">產生排程 →</button>
+          <button class="sbtn-sm" onclick="schedStep(2,document.querySelectorAll('.sched-step')[1])">� 銝銝\甇�</button>
+          <button class="sbtn" onclick="schedGenerateSchedule()">�Ｙ�蝔 �</button>
         </div>
       </div>
 
-      <!-- 步驟四：排程產出 -->
+      <!-- 甇仿��嚗�蝔�Ｗ� -->
       <div id="sched-s4" class="hide">
         <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
-          <button class="sbtn" onclick="schedCopySchedule()">複製排程</button>
-          <button class="sbtn-sm" onclick="schedStep(3,document.querySelectorAll('.sched-step')[2])">← 修改人員</button>
+          <button class="sbtn" onclick="schedCopySchedule()">銴鋆賣蝔</button>
+          <button class="sbtn-sm" onclick="schedStep(3,document.querySelectorAll('.sched-step')[2])">� 靽格嫣犖��</button>
         </div>
         <div id="sched-output"></div>
         <div class="card hide" id="sched-history-card" style="margin-top:14px">
-          <div class="ct">歷史排程</div>
+          <div class="ct">甇瑕脫蝔</div>
           <div id="sched-historyList"></div>
         </div>
       </div>
     </div>
 
-    <!-- 輸入資料（管理員專用） -->
+    <!-- 頛詨亥��嚗蝞∠�∪��剁� -->
     <div id="tab-input" class="hide">
       <div id="input-locked" class="card" style="text-align:center;padding:40px">
-        <div style="font-size:14px;color:#888;margin-bottom:16px">請先登入管理員帳號才能輸入資料</div>
-        <button class="sbtn" onclick="showPwdModal()">管理員登入</button>
+        <div style="font-size:14px;color:#888;margin-bottom:16px">隢��餃亦恣��∪董���質撓�亥��</div>
+        <button class="sbtn" onclick="showPwdModal()">蝞∠�∠餃�</button>
       </div>
       <div id="input-form" class="hide">
         <div class="card">
-          <div class="ct">人時紀錄</div>
+          <div class="ct">鈭箸蝝\�</div>
           <div class="row3">
-            <div class="fg"><label class="fl">總人時（hr）</label><input type="number" id="totalHours" min="0" placeholder="如 416"></div>
-            <div class="fg"><label class="fl">實際生產時數（hr）</label><input type="number" id="productionHours" min="0" placeholder="如 160"></div>
-            <div class="fg"><label class="fl">摺盒時數（hr）</label><input type="number" id="boxFoldingCount" min="0" placeholder="如 81"></div>
+            <div class="fg"><label class="fl">蝮賭犖�嚗hr嚗</label><input type="number" id="totalHours" min="0" placeholder="憒 416"></div>
+            <div class="fg"><label class="fl">撖阡��Ｘ�賂�hr嚗</label><input type="number" id="productionHours" min="0" placeholder="憒 160"></div>
+            <div class="fg"><label class="fl">�箇��賂�hr嚗</label><input type="number" id="boxFoldingCount" min="0" placeholder="憒 81"></div>
           </div>
         </div>
         <div class="card">
-          <div class="ct">產品組裝數量（盒）</div>
+          <div class="ct">�Ｗ蝯鋆�賊嚗�嚗</div>
           <div id="plan-compare-hint" class="hide" style="background:#E6F1FB;border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:11px;color:#0C447C;line-height:1.8"></div>
           <div class="row3">
-            <div class="fg"><label class="fl">婚禮禮盒</label><input type="number" id="weddingCount" min="0" placeholder="0"></div>
-            <div class="fg"><label class="fl">彌月禮盒</label><input type="number" id="babyCount" min="0" placeholder="0"></div>
-            <div class="fg"><label class="fl">節慶禮盒</label><input type="number" id="festivalCount" min="0" placeholder="0"></div>
+            <div class="fg"><label class="fl">憍蝳桃旨�</label><input type="number" id="weddingCount" min="0" placeholder="0"></div>
+            <div class="fg"><label class="fl">敶�蝳桃</label><input type="number" id="babyCount" min="0" placeholder="0"></div>
+            <div class="fg"><label class="fl">蝭\�嗥旨�</label><input type="number" id="festivalCount" min="0" placeholder="0"></div>
           </div>
         </div>
         <div class="card">
-          <div class="ct">品質紀錄</div>
+          <div class="ct">�鞈芰�\�</div>
           <div class="row2">
-            <div class="fg"><label class="fl">不良類型（如：破碎、焦黑）</label><input type="text" id="badTypes" placeholder="破碎、焦黑…"></div>
-            <div class="fg"><label class="fl">報廢大宗品名</label><input type="text" id="scrapItem" placeholder="如：英式伯爵茶餅"></div>
+            <div class="fg"><label class="fl">銝�舫��嚗憒嚗� 渡��\�阡�嚗</label><input type="text" id="badTypes" placeholder="� 渡��\�阡��\�"></div>
+            <div class="fg"><label class="fl">� 勗誥憭批���</label><input type="text" id="scrapItem" placeholder="憒嚗�勗�隡舐菔園�"></div>
           </div>
           <div class="row4">
-            <div class="fg"><label class="fl">報廢大宗品數量</label><input type="number" id="scrapQty" min="0" placeholder="0"></div>
-            <div class="fg"><label class="fl">報廢大宗品比例（%）</label><input type="number" id="scrapRate" step="0.01" min="0" placeholder="4.07"></div>
-            <div class="fg"><label class="fl">不良總數量（個）</label><input type="number" id="badCount" min="0" placeholder="0"></div>
-            <div class="fg"><label class="fl">不良總金額（元）</label><input type="number" id="badCost" min="0" placeholder="0"></div>
+            <div class="fg"><label class="fl">� 勗誥憭批���賊</label><input type="number" id="scrapQty" min="0" placeholder="0"></div>
+            <div class="fg"><label class="fl">� 勗誥憭批��瘥靘嚗%嚗</label><input type="number" id="scrapRate" step="0.01" min="0" placeholder="4.07"></div>
+            <div class="fg"><label class="fl">銝�舐蜇�賊嚗�\嚗</label><input type="number" id="badCount" min="0" placeholder="0"></div>
+            <div class="fg"><label class="fl">銝�舐蜇�憿嚗�嚗</label><input type="number" id="badCost" min="0" placeholder="0"></div>
           </div>
           <div class="row2">
-            <div class="fg"><label class="fl">餅乾不良率（小數，如 0.001）</label><input type="number" id="cookieRate" step="0.0001" min="0" placeholder="0.001"></div>
-            <div class="fg"><label class="fl">禮盒報廢率（小數，如 0.016）</label><input type="number" id="boxScrapRate" step="0.0001" min="0" placeholder="0.016"></div>
+            <div class="fg"><label class="fl">擗銋曆��舐嚗撠�賂�憒 0.001嚗</label><input type="number" id="cookieRate" step="0.0001" min="0" placeholder="0.001"></div>
+            <div class="fg"><label class="fl">蝳桃� 勗誥�嚗撠�賂�憒 0.016嚗</label><input type="number" id="boxScrapRate" step="0.0001" min="0" placeholder="0.016"></div>
           </div>
         </div>
         <div class="card">
-          <div class="ct">教育訓練</div>
+          <div class="ct">��脰�蝺�</div>
           <div class="row2">
-            <div class="fg"><label class="fl">本週訓練時數（hr）</label><input type="number" id="trainingHours" min="0" placeholder="0"></div>
-            <div class="fg"><label class="fl">訓練小結</label><input type="text" id="trainingNote" placeholder="如：5S整理、品質教育"></div>
+            <div class="fg"><label class="fl">�祇\梯�蝺湔�賂�hr嚗</label><input type="number" id="trainingHours" min="0" placeholder="0"></div>
+            <div class="fg"><label class="fl">閮蝺游�蝯</label><input type="text" id="trainingNote" placeholder="憒嚗5S�渡�\�鞈芣��"></div>
           </div>
         </div>
         <div style="display:flex;align-items:center;margin-top:4px">
-          <button class="sbtn" onclick="saveWeek()">儲存本週資料</button>
-          <span class="smsg hide" id="smsg">✓ 已儲存</span>
+          <button class="sbtn" onclick="saveWeek()">�脣��祇\梯��</button>
+          <span class="smsg hide" id="smsg">� 撌脣脣�</span>
           <span class="errmsg hide" id="errmsg"></span>
         </div>
       </div>
     </div>
 
-    <!-- 品質分析 -->
+    <!-- �鞈芸� -->
     <div id="tab-quality" class="hide">
       <div class="metrics" id="q-kpi"></div>
-      <div class="card"><div class="ct">各週不良金額趨勢（近 8 週）</div><div id="q-trend"></div></div>
+      <div class="card"><div class="ct">��\曹��舫憿頞典ｇ�餈 8 �\梧�</div><div id="q-trend"></div></div>
       <div class="card">
-        <div class="ct">各週品質明細</div>
+        <div class="ct">��\勗鞈芣蝝�</div>
         <div style="overflow-x:auto">
-          <table><thead><tr><th>週別</th><th>不良類型</th><th>報廢大宗品</th><th>數量</th><th>金額（元）</th><th>餅乾不良率</th><th>禮盒報廢率</th></tr></thead>
+          <table><thead><tr><th>�\勗�</th><th>銝�舫��</th><th>� 勗誥憭批��</th><th>�賊</th><th>�憿嚗�嚗</th><th>擗銋曆��舐</th><th>蝳桃� 勗誥�</th></tr></thead>
           <tbody id="q-table"></tbody></table>
         </div>
       </div>
     </div>
 
-    <!-- 跨週比較 -->
+    <!-- 頝券\望�頛 -->
     <div id="tab-compare" class="hide">
-      <div class="card"><div class="ct">各週總組裝量（近 8 週）</div><div id="cmp-prod"></div></div>
-      <div class="card"><div class="ct">各週工時效率 — 理論工時 ÷ 總人時（近 8 週）</div><div id="cmp-eff"></div></div>
+      <div class="card"><div class="ct">��\梁蜇蝯鋆�嚗餈 8 �\梧�</div><div id="cmp-prod"></div></div>
+      <div class="card"><div class="ct">��\勗極��� �\ �隢撌交 繩 蝮賭犖�嚗餈 8 �\梧�</div><div id="cmp-eff"></div></div>
       <div class="card">
-        <div class="ct">各週工時差異 — 理論工時 − 實際生產工時（近 8 週）</div>
-        <div style="font-size:11px;color:#888;margin-bottom:10px">正值 = 工時有餘裕　負值 = 超出理論標準</div>
+        <div class="ct">��\勗極�撌桃� �\ �隢撌交 � 撖阡��Ｗ極�嚗餈 8 �\梧�</div>
+        <div style="font-size:11px;color:#888;margin-bottom:10px">甇�\� = 撌交�擗鋆�\\鞎 �\� = 頞�箇隢璅皞</div>
         <div id="cmp-diff"></div>
       </div>
-      <div class="card"><div class="ct">各週教育訓練時數（近 8 週）</div><div id="cmp-train"></div></div>
+      <div class="card"><div class="ct">��\望�脰�蝺湔�賂�餈 8 �\梧�</div><div id="cmp-train"></div></div>
     </div>
 
-    <!-- 人員技能 -->
+    <!-- 鈭箏⊥\�� -->
     <div id="tab-staff" class="hide">
       <div class="card">
         <div class="ct" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
-          <span>人員技能等級 <span style="font-size:11px;font-weight:400;color:#888" id="staff-week-label"></span></span>
+          <span>鈭箏⊥\�賜�蝝 <span style="font-size:11px;font-weight:400;color:#888" id="staff-week-label"></span></span>
           <div style="display:flex;gap:8px;align-items:center">
-            <span style="font-size:11px;color:#888">等級：基本 → 獨立 → 熟練 → 異常處理</span>
-            <button class="sbtn-sm hide" id="staff-save-btn" onclick="saveStaffWeek()">儲存本週技能</button>
-            <span class="smsg hide" id="staff-smsg">✓ 已儲存</span>
+            <span style="font-size:11px;color:#888">蝑蝝嚗�箸� � �函� � �蝺� � �啣虜��</span>
+            <button class="sbtn-sm hide" id="staff-save-btn" onclick="saveStaffWeek()">�脣��祇\望\��</button>
+            <span class="smsg hide" id="staff-smsg">� 撌脣脣�</span>
           </div>
         </div>
-        <div style="font-size:11px;color:#888;margin-bottom:14px">每週技能狀況獨立記錄，新的一週會自動帶入上週等級，調整後按「儲存本週技能」</div>
+        <div style="font-size:11px;color:#888;margin-bottom:14px">瘥�\望\�賜\瘜�函�閮�嚗�啁銝\�\望�芸撣嗅乩��\梁�蝝嚗隤踵游���\�脣��祇\望\�賬\</div>
         <div id="staff-grid" class="staff-grid"></div>
       </div>
       <div class="card hide" id="staff-admin-panel">
-        <div class="ct">管理人員與站別設定</div>
+        <div class="ct">蝞∠鈭箏∟蝡�亥身摰</div>
         <div class="row2">
           <div class="fg">
-            <label class="fl">新增人員</label>
+            <label class="fl">�啣�鈭箏�</label>
             <div style="display:flex;gap:8px">
-              <input type="text" id="new-staff-name" placeholder="姓名" style="flex:1">
-              <button class="sbtn" onclick="addStaff()">新增</button>
+              <input type="text" id="new-staff-name" placeholder="憪�" style="flex:1">
+              <button class="sbtn" onclick="addStaff()">�啣�</button>
             </div>
           </div>
           <div class="fg">
-            <label class="fl">新增站別</label>
+            <label class="fl">�啣�蝡��</label>
             <div style="display:flex;gap:8px">
-              <input type="text" id="new-station-name" placeholder="站別名稱" style="flex:1">
-              <button class="sbtn" onclick="addStation()">新增</button>
+              <input type="text" id="new-station-name" placeholder="蝡�亙蝔�" style="flex:1">
+              <button class="sbtn" onclick="addStation()">�啣�</button>
             </div>
           </div>
         </div>
         <div style="font-size:12px;color:#888;margin-top:4px">
-          目前站別：<span id="station-list-display"></span>
+          �桀蝡�伐�<span id="station-list-display"></span>
         </div>
       </div>
     </div>
 
-    <!-- 週報告 -->
+    <!-- �\勗 勗 -->
     <div id="tab-report" class="hide">
       <div class="card" id="rpt-content"></div>
       <div style="margin-top:12px">
-        <button class="sbtn" onclick="exportReport()">匯出本週報告（複製文字）</button>
+        <button class="sbtn" onclick="exportReport()">�臬箸祇\勗 勗嚗銴鋆賣摮嚗</button>
       </div>
     </div>
   </div>
@@ -450,10 +450,10 @@ input:focus,textarea:focus{outline:none;border-color:#888;background:#fff}
 
 <script>
 // =====================================================
-// ★ 設定你的 Apps Script 網址（部署後貼在這裡）
+// � 閮剖�雿 � Apps Script 蝬脣\嚗�函蔡敺鞎澆券\鋆∴�
 // =====================================================
 const API_URL = 'https://script.google.com/macros/s/AKfycbyxVH0bwe96t70tJPa7L-drDhwUnD2ppwpxgsssQzpnndK967KWPfbYWcwMLFTxTXG5OA/exec';
-// 範例: const API_URL = 'https://script.google.com/macros/s/AKfycb.../exec';
+// 蝭靘: const API_URL = 'https://script.google.com/macros/s/AKfycb.../exec';
 
 const STD = { wedding: 25, baby: 35 };
 let curW = 0;
@@ -461,7 +461,7 @@ let store = {};
 let isAdmin = false;
 let adminPwd = '';
 
-// ---- 資料操作 ----
+// ---- 鞈��雿 ----
 function wkey(o){ return 'w'+(o>=0?'p':'m')+Math.abs(o); }
 function emptyWeek(){ return {totalHours:0,productionHours:0,boxFoldingCount:0,weddingCount:0,babyCount:0,festivalCount:0,badTypes:'',scrapItem:'',scrapQty:0,scrapRate:0,badCount:0,badCost:0,cookieRate:0,boxScrapRate:0,trainingHours:0,trainingNote:''}; }
 function getW(o){ return store[wkey(o)] || emptyWeek(); }
@@ -471,9 +471,9 @@ async function loadFromServer(){
     const res = await fetch(API_URL+'?action=read');
     const json = await res.json();
     if(json.ok) store = json.data || {};
-    document.getElementById('sstatus').textContent = '最後更新：'+new Date().toLocaleTimeString('zh-TW');
+    document.getElementById('sstatus').textContent = '�\敺�湔堆�'+new Date().toLocaleTimeString('zh-TW');
   }catch(e){
-    document.getElementById('sstatus').textContent = '無法連線，請確認 API 網址設定';
+    document.getElementById('sstatus').textContent = '�⊥��\��嚗隢蝣箄� API 蝬脣\閮剖�';
   }
   document.getElementById('loading-screen').classList.add('hide');
   document.getElementById('app-content').classList.remove('hide');
@@ -500,19 +500,19 @@ async function saveWeek(){
     if(json.ok){
       smsg.classList.remove('hide');
       setTimeout(()=>smsg.classList.add('hide'),3000);
-      document.getElementById('sstatus').textContent='已儲存 · '+new Date().toLocaleTimeString('zh-TW');
+      document.getElementById('sstatus').textContent='撌脣脣� 繚 '+new Date().toLocaleTimeString('zh-TW');
       render();
     } else {
-      errmsg.textContent = json.error||'儲存失敗';
+      errmsg.textContent = json.error||'�脣�憭望';
       errmsg.classList.remove('hide');
     }
   }catch(e){
-    errmsg.textContent='網路錯誤，請稍後再試';
+    errmsg.textContent='蝬脰楝�航炊嚗隢蝔敺�閰�';
     errmsg.classList.remove('hide');
   }
 }
 
-// ---- 密碼 modal ----
+// ---- 撖蝣� modal ----
 function showPwdModal(){
   document.getElementById('pwd-modal').classList.remove('hide');
   document.getElementById('pwd-input').value='';
@@ -524,7 +524,7 @@ function closePwdModal(){
 }
 async function checkPwd(){
   const pwd = document.getElementById('pwd-input').value;
-  // 向 server 驗證密碼（用一個假寫入來測試）
+  // � server 撽霅撖蝣潘��其�\�\�撖怠乩�皜祈岫嚗
   try{
     const url = `${API_URL}?action=write&pwd=${encodeURIComponent(pwd)}&weekKey=test&payload={}`;
     const res = await fetch(url);
@@ -533,20 +533,20 @@ async function checkPwd(){
       isAdmin=true; adminPwd=pwd;
       closePwdModal();
       document.getElementById('admin-badge').classList.remove('hide');
-      document.getElementById('login-btn').textContent='管理員已登入';
+      document.getElementById('login-btn').textContent='蝞∠�∪歇�餃�';
       document.getElementById('login-btn').disabled=true;
       document.getElementById('input-locked').classList.add('hide');
       document.getElementById('input-form').classList.remove('hide');
       fillInputs();
     } else {
-      document.getElementById('pwd-err').textContent='密碼錯誤，請再試一次';
+      document.getElementById('pwd-err').textContent='撖蝣潮航炊嚗隢�閰虫�\甈�';
     }
   }catch(e){
-    document.getElementById('pwd-err').textContent='連線失敗，請檢查網路';
+    document.getElementById('pwd-err').textContent='�\��憭望嚗隢瑼Ｘ亦雯頝�';
   }
 }
 
-// ---- 日期工具 ----
+// ---- �交撌亙� ----
 function getMondayOfWeek(offset){
   const today=new Date(), day=today.getDay();
   const monday=new Date(today);
@@ -563,7 +563,7 @@ function wlabel(offset){
   const fmt=d=>`${d.getMonth()+1}/${d.getDate()}`;
   const jan1=new Date(mon.getFullYear(),0,1);
   const wn=Math.ceil((((mon-jan1)/86400000)+jan1.getDay()+1)/7);
-  return `${mon.getFullYear()} W${wn}　${fmt(mon)}（一）– ${fmt(fri)}（五）`;
+  return `${mon.getFullYear()} W${wn}�\\${fmt(mon)}嚗銝\嚗�\ ${fmt(fri)}嚗鈭嚗`;
 }
 function wlabelShort(offset){
   const days=getWorkdays(offset);
@@ -572,31 +572,31 @@ function wlabelShort(offset){
   return `W${wn} ${days[0].getMonth()+1}/${days[0].getDate()}`;
 }
 
-// ---- 計算工具 ----
+// ---- 閮蝞撌亙� ----
 function calcTheory(d){ return Math.round(((d.weddingCount/STD.wedding)+(d.babyCount/STD.baby))*100)/100; }
 function round2(v){ return Math.round(v*100)/100; }
 function pct(v){ return (v*100).toFixed(2)+'%'; }
 
-// ---- 填入輸入欄位 ----
+// ---- 憛怠亥撓�交�雿 ----
 function fillInputs(){
   const d=getW(curW);
   ['totalHours','productionHours','boxFoldingCount','weddingCount','babyCount','festivalCount','badTypes','scrapItem','scrapQty','scrapRate','badCount','badCost','cookieRate','boxScrapRate','trainingHours','trainingNote'].forEach(k=>{
     const el=document.getElementById(k); if(el) el.value=d[k]||'';
   });
-  // 顯示排程計畫數字供對比
+  // 憿舐內�蝔閮�急詨�靘撠瘥
   try{
     const plan=JSON.parse(localStorage.getItem('sched_plan_'+wkey(curW))||'null');
     const hint=document.getElementById('plan-compare-hint');
     if(plan&&hint){
       hint.classList.remove('hide');
-      hint.innerHTML=`排程計畫：婚禮 <strong>${plan.wedding}</strong> 盒　彌月 <strong>${plan.baby}</strong> 盒　節慶 <strong>${plan.festival}</strong> 盒　合計 <strong>${plan.wedding+plan.baby+plan.festival}</strong> 盒`;
+      hint.innerHTML=`�蝔閮�恬�憍蝳� <strong>${plan.wedding}</strong> ��\\敶� <strong>${plan.baby}</strong> ��\\蝭\�� <strong>${plan.festival}</strong> ��\\�閮 <strong>${plan.wedding+plan.baby+plan.festival}</strong> �`;
     } else if(hint){
       hint.classList.add('hide');
     }
   }catch(e){}
 }
 
-// ---- 主要渲染 ----
+// ---- 銝餉�皜脫 ----
 function render(){
   document.getElementById('wklabel').textContent=wlabel(curW);
   const d=getW(curW);
@@ -605,16 +605,19 @@ function render(){
   const effPct=d.totalHours>0?Math.round(theory/d.totalHours*100):0;
   const diff=round2(theory-d.productionHours);
 
-  // 共用計算
+  // �梁刻�蝞
   const unexplained = round2(Math.max(0, d.totalHours - d.productionHours - d.boxFoldingCount - d.trainingHours));
-  const kaido = d.totalHours > 0 ? Math.round(d.productionHours / d.totalHours * 100) : 0;
+  // 蝔澆� = �隢撌交 繩 撖阡��Ｗ極�嚗銵⊿��Ｘ�嚗vs 璅皞�\�嚗
+  const kaido = d.productionHours > 0 ? Math.round(theory / d.productionHours * 100) : 0;
+  // ��Ｗ極�雿瘥 = 撖阡��Ｗ極� 繩 蝮賭犖�嚗銵⊿鈭箏��嚗瘝�冽箇/閮蝺渡瘥靘嚗
+  const prodShare = d.totalHours > 0 ? Math.round(d.productionHours / d.totalHours * 100) : 0;
 
-  // KPI → 產能總覽（含計畫對比）
+  // KPI � �Ｚ賜蜇閬踝��怨��怠�瘥嚗
   const hasPlan = !!(d.plannedWedding || d.plannedBaby || d.plannedFestival);
   const prodItems = [
-    {label:'婚禮', val:d.weddingCount, plan:d.plannedWedding||0, color:'#1D9E75'},
-    {label:'彌月', val:d.babyCount, plan:d.plannedBaby||0, color:'#378ADD'},
-    {label:'節慶', val:d.festivalCount, plan:d.plannedFestival||0, color:'#BA7517'},
+    {label:'憍蝳�', val:d.weddingCount, plan:d.plannedWedding||0, color:'#1D9E75'},
+    {label:'敶�', val:d.babyCount, plan:d.plannedBaby||0, color:'#378ADD'},
+    {label:'蝭\��', val:d.festivalCount, plan:d.plannedFestival||0, color:'#BA7517'},
   ];
   const plannedTotal = (d.plannedWedding||0)+(d.plannedBaby||0)+(d.plannedFestival||0);
   const maxProdVal = Math.max(...prodItems.map(p=>Math.max(p.val,p.plan)), 1);
@@ -625,54 +628,56 @@ function render(){
         const rateColor = rate >= 95 ? '#1D9E75' : rate >= 80 ? '#BA7517' : '#E24B4A';
         return `
         <div style="text-align:center">
-          <div style="font-size:11px;color:#888;margin-bottom:6px">${p.label}禮盒</div>
+          <div style="font-size:11px;color:#888;margin-bottom:6px">${p.label}蝳桃</div>
           <div style="font-size:28px;font-weight:600;color:${p.color}">${p.val.toLocaleString()}</div>
-          <div style="font-size:10px;color:#aaa;margin-top:2px">盒</div>
-          ${hasPlan && p.plan > 0 ? `<div style="font-size:10px;color:#888;margin-top:4px">計畫 ${p.plan.toLocaleString()}</div><div style="font-size:11px;font-weight:600;color:${rateColor};margin-top:2px">${rate}%</div>` : ''}
+          <div style="font-size:10px;color:#aaa;margin-top:2px">�</div>
+          ${hasPlan && p.plan > 0 ? `<div style="font-size:10px;color:#888;margin-top:4px">閮�� ${p.plan.toLocaleString()}</div><div style="font-size:11px;font-weight:600;color:${rateColor};margin-top:2px">${rate}%</div>` : ''}
           <div style="background:#f0f0ee;border-radius:3px;height:4px;margin-top:6px;position:relative">
             <div style="height:4px;border-radius:3px;background:${p.color};width:${Math.round(p.val/maxProdVal*100)}%"></div>
-            ${hasPlan && p.plan > 0 ? `<div style="position:absolute;top:-2px;left:${Math.min(Math.round(p.plan/maxProdVal*100),100)}%;width:2px;height:8px;background:#1a1a1a;border-radius:1px" title="計畫 ${p.plan}"></div>` : ''}
+            ${hasPlan && p.plan > 0 ? `<div style="position:absolute;top:-2px;left:${Math.min(Math.round(p.plan/maxProdVal*100),100)}%;width:2px;height:8px;background:#1a1a1a;border-radius:1px" title="閮�� ${p.plan}"></div>` : ''}
           </div>
         </div>`}).join('')}
     </div>
     <div style="border-top:1px solid #f0f0ee;padding-top:12px;display:flex;gap:20px;flex-wrap:wrap">
-      <div style="font-size:12px;color:#555">總組裝：<strong style="color:#1a1a1a;font-size:16px">${totalBox.toLocaleString()}</strong> 盒${hasPlan ? ` <span style="font-size:11px;color:#888">/ 計畫 ${plannedTotal.toLocaleString()}</span>` : ''}</div>
-      ${hasPlan && plannedTotal > 0 ? `<div style="font-size:12px;color:#555">達成率：<strong style="color:${Math.round(totalBox/plannedTotal*100)>=95?'#1D9E75':Math.round(totalBox/plannedTotal*100)>=80?'#BA7517':'#E24B4A'}">${Math.round(totalBox/plannedTotal*100)}%</strong></div>` : ''}
-      <div style="font-size:12px;color:#555">總人時：<strong style="color:#1a1a1a">${d.totalHours}</strong> hr${hasPlan && d.plannedTotalHours ? ` <span style="font-size:11px;color:#888">/ 計畫 ${d.plannedTotalHours}</span>` : ''}</div>
-      <div style="font-size:12px;color:#555">稼動率：<strong style="color:#1a1a1a">${kaido}%</strong></div>
-      <div style="font-size:12px;color:#555">不良金額：<strong style="color:${d.badCost>5000?'#A32D2D':'#1a1a1a'}">$${(d.badCost||0).toLocaleString()}</strong></div>
+      <div style="font-size:12px;color:#555">蝮賜�鋆嚗<strong style="color:#1a1a1a;font-size:16px">${totalBox.toLocaleString()}</strong> �${hasPlan ? ` <span style="font-size:11px;color:#888">/ 閮�� ${plannedTotal.toLocaleString()}</span>` : ''}</div>
+      ${hasPlan && plannedTotal > 0 ? `<div style="font-size:12px;color:#555">���嚗<strong style="color:${Math.round(totalBox/plannedTotal*100)>=95?'#1D9E75':Math.round(totalBox/plannedTotal*100)>=80?'#BA7517':'#E24B4A'}">${Math.round(totalBox/plannedTotal*100)}%</strong></div>` : ''}
+      <div style="font-size:12px;color:#555">蝮賭犖�嚗<strong style="color:#1a1a1a">${d.totalHours}</strong> hr${hasPlan && d.plannedTotalHours ? ` <span style="font-size:11px;color:#888">/ 閮�� ${d.plannedTotalHours}</span>` : ''}</div>
+      <div style="font-size:12px;color:#555">蝔澆�嚗<strong style="color:${kaido>=80?'#1D9E75':'#E24B4A'}">${kaido}%</strong></div>
+      <div style="font-size:12px;color:#555">��Ｗ極�雿瘥嚗<strong style="color:${prodShare>=80?'#1D9E75':'#E24B4A'}">${prodShare}%</strong></div>
+      <div style="font-size:12px;color:#555">銝�舫憿嚗<strong style="color:${d.badCost>5000?'#A32D2D':'#1a1a1a'}">$${(d.badCost||0).toLocaleString()}</strong></div>
     </div>`;
 
-  // 工時分析
+  // 撌交��
   const hrItems = [
-    {label:'實際生產工時', val:d.productionHours,  color:'#1D9E75'},
-    {label:'摺盒工時',    val:d.boxFoldingCount,  color:'#BA7517'},
-    {label:'訓練時數',    val:d.trainingHours,    color:'#534AB7'},
-    {label:'未解釋工時',  val:unexplained,        color:'#E24B4A'},
+    {label:'撖阡��Ｗ極�', val:d.productionHours,  color:'#1D9E75'},
+    {label:'�箇撌交',    val:d.boxFoldingCount,  color:'#BA7517'},
+    {label:'閮蝺湔��',    val:d.trainingHours,    color:'#534AB7'},
+    {label:'�芾圾�撌交',  val:unexplained,        color:'#E24B4A'},
   ];
   const total = d.totalHours || 1;
   const hrDiff = round2(theory - d.productionHours);
 
-  // 稼動率分析訊息
+  // 蝔澆���閮�荔�蝔澆� = �隢 繩 撖阡��ｇ�銵⊿��嚗
   let kaidoMsg='', kaidoBg='#E1F5EE', kaidoBorder='#9FE1CB', kaidoColor='#085041';
   if(kaido >= 80){
-    kaidoMsg = `稼動率 <strong>${kaido}%</strong>，達標（目標 ≥ 80%）。`;
-    if(hrDiff < -2) kaidoMsg += ` 但實際生產比理論工時多用 <strong>${Math.abs(hrDiff)} hr</strong>，速度略低於標準，建議觀察人員熟練度。`;
-    else if(hrDiff > 2) kaidoMsg += ` 實際生產比理論工時少用 ${hrDiff} hr，速度優於標準。`;
+    kaidoMsg = `蝔澆� <strong>${kaido}%</strong>嚗��Ｘ��璅嚗�格� �� 80%嚗�\`;
+    if(prodShare < 80) kaidoMsg += ` 雿��Ｗ極�雿瘥� ${prodShare}%嚗隞�”頛憭���冽箇/閮蝺湛��航�隡啁Ｙ����\`;
   } else {
     kaidoBg='#FCEBEB'; kaidoBorder='#F09595'; kaidoColor='#791F1F';
-    const nonProd = round2(d.totalHours - d.productionHours);
-    kaidoMsg = `稼動率 <strong>${kaido}%</strong>，未達 80% 目標。非生產工時共 <strong>${nonProd} hr</strong>`;
-    const parts = [];
-    if(d.boxFoldingCount > 0) parts.push(`摺盒 ${d.boxFoldingCount} hr`);
-    if(d.trainingHours > 0) parts.push(`訓練 ${d.trainingHours} hr`);
-    if(unexplained > 0) parts.push(`未解釋 ${unexplained} hr`);
-    if(parts.length) kaidoMsg += `（${parts.join('、')}）`;
-    kaidoMsg += '。';
-    if(hrDiff < -2) kaidoMsg += ` 另實際生產速度比標準慢 ${Math.abs(hrDiff)} hr，可能為人員熟練度或流程問題。`;
+    kaidoMsg = `蝔澆� <strong>${kaido}%</strong>嚗�芷 80% �格��\撖阡��� <strong>${d.productionHours} hr</strong> ��� ${totalBox} �嚗�璅皞�芷\ <strong>${theory} hr</strong>嚗憭�其� <strong>${Math.abs(hrDiff)} hr</strong>�\`;
+    kaidoMsg += ` �航賢� 嚗鈭箏∠蝺游漲銝頞喋\閮剖/��蝑敺�\蝡雿�蝵柴\�甈曇��摨艾\`;
+    if(prodShare >= 80) kaidoMsg += ` ��Ｗ極�雿瘥 ${prodShare}%嚗鈭箏憭 敹嚗嚗雿��銝�璅�\`;
+    else {
+      const nonProd = round2(d.totalHours - d.productionHours);
+      const parts = [];
+      if(d.boxFoldingCount > 0) parts.push(`�箇 ${d.boxFoldingCount} hr`);
+      if(d.trainingHours > 0) parts.push(`閮蝺� ${d.trainingHours} hr`);
+      if(unexplained > 0) parts.push(`�芾圾� ${unexplained} hr`);
+      kaidoMsg += ` �血����� ${nonProd} hr${parts.length?`嚗${parts.join('�\')}嚗`:''}�\`;
+    }
   }
 
-  // SVG 甜甜圈
+  // SVG ���
   const R=70, cx=90, cy=90, stroke=28, circ=2*Math.PI*R;
   let offset=0;
   const slices=hrItems.map(h=>{
@@ -693,21 +698,21 @@ function render(){
           <circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="#f0f0ee" stroke-width="${stroke}"/>
           ${total>0?slices:''}
           <line x1="${tx1}" y1="${ty1}" x2="${tx2}" y2="${ty2}" stroke="#fff" stroke-width="3"/>
-          <text x="${cx}" y="${cy-16}" text-anchor="middle" font-size="10" fill="#888" font-family="inherit">稼動率</text>
-          <text x="${cx}" y="${cy+12}" text-anchor="middle" font-size="26" font-weight="600" fill="${kaido>=80?'#1D9E75':'#E24B4A'}" font-family="inherit">${kaido}%</text>
-          <text x="${cx}" y="${cy+28}" text-anchor="middle" font-size="10" fill="${kaido>=80?'#1D9E75':'#E24B4A'}" font-family="inherit">${kaido>=80?'✓ 達標':'✗ 未達標'}</text>
-          <text x="${cx}" y="${cy+44}" text-anchor="middle" font-size="9" fill="#aaa" font-family="inherit">理論 ${theory} hr</text>
+          <text x="${cx}" y="${cy-20}" text-anchor="middle" font-size="10" fill="#888" font-family="inherit">蝔澆�嚗��嚗</text>
+          <text x="${cx}" y="${cy+10}" text-anchor="middle" font-size="26" font-weight="600" fill="${kaido>=80?'#1D9E75':'#E24B4A'}" font-family="inherit">${kaido}%</text>
+          <text x="${cx}" y="${cy+26}" text-anchor="middle" font-size="10" fill="${kaido>=80?'#1D9E75':'#E24B4A'}" font-family="inherit">${kaido>=80?'� �璅':'� �芷璅'}</text>
+          <text x="${cx}" y="${cy+42}" text-anchor="middle" font-size="9" fill="#aaa" font-family="inherit">�隢${theory}/撖衣�${d.productionHours}hr</text>
         </svg>
-        <div style="font-size:10px;color:#aaa;margin-top:-4px">白線 = 80% 目標</div>
+        <div style="font-size:10px;color:#aaa;margin-top:-4px">�賜� = 80% �格�</div>
         <div style="margin-top:10px;background:#f5f5f3;border-radius:8px;padding:8px 12px;text-align:left;font-size:11px;color:#555;line-height:1.9">
-          <div>總人時：<strong style="color:#1a1a1a">${d.totalHours} hr</strong>${hasPlan && d.plannedTotalHours ? ` <span style="color:#888">/ 計畫 ${d.plannedTotalHours} hr</span>` : ''}</div>
-          <div>理論工時：<strong style="color:#378ADD">${theory} hr</strong></div>
-          <div>工時差異：<strong style="color:${hrDiff>=0?'#1D9E75':'#E24B4A'}">${hrDiff>=0?'+':''}${hrDiff} hr</strong></div>
-          ${hasPlan && d.plannedProductionHours ? `<div>計畫生產：<strong style="color:#888">${d.plannedProductionHours} hr</strong>${d.plannedFoldHours ? ` 摺盒：${d.plannedFoldHours} hr` : ''}</div>` : ''}
+          <div>蝮賭犖�嚗<strong style="color:#1a1a1a">${d.totalHours} hr</strong>${hasPlan && d.plannedTotalHours ? ` <span style="color:#888">/ 閮�� ${d.plannedTotalHours} hr</span>` : ''}</div>
+          <div>�隢撌交嚗<strong style="color:#378ADD">${theory} hr</strong></div>
+          <div>撌交撌桃堆�<strong style="color:${hrDiff>=0?'#1D9E75':'#E24B4A'}">${hrDiff>=0?'+':''}${hrDiff} hr</strong></div>
+          ${hasPlan && d.plannedProductionHours ? `<div>閮�怎�ｇ�<strong style="color:#888">${d.plannedProductionHours} hr</strong>${d.plannedFoldHours ? ` �箇嚗${d.plannedFoldHours} hr` : ''}</div>` : ''}
         </div>
       </div>
       <div style="flex:1;min-width:200px">
-        <div style="font-size:12px;font-weight:500;color:#1a1a1a;margin-bottom:12px">工時去向</div>
+        <div style="font-size:12px;font-weight:500;color:#1a1a1a;margin-bottom:12px">撌交�餃</div>
         ${hrItems.map(h=>{
           const p2=total>0?Math.round(h.val/total*100):0;
           const barW=Math.max(p2,0);
@@ -724,15 +729,16 @@ function render(){
             </div>
           </div>`;
         }).join('')}
-        <div style="font-size:11px;color:#888;border-top:1px solid #f0f0ee;padding-top:8px;margin-top:4px">
-          稼動率 ＝ 實際生產工時 ÷ 總人時　｜　目標 ≥ 80%
+        <div style="font-size:11px;color:#888;border-top:1px solid #f0f0ee;padding-top:8px;margin-top:4px;line-height:1.7">
+          蝔澆� 嚗 �隢撌交 繩 撖阡��Ｗ極��\\嚚�\\�格� �� 80%嚗銵⊿��Ｘ�嚗<br>
+          ��Ｗ極�雿瘥 嚗 撖阡��� 繩 蝮賭犖� = <strong>${prodShare}%</strong>嚗銵⊿鈭箏��嚗
         </div>
       </div>
     </div>
     <div style="background:${kaidoBg};border:1px solid ${kaidoBorder};border-radius:8px;padding:10px 14px;font-size:12px;line-height:1.9;color:${kaidoColor};margin-top:14px">${kaidoMsg}</div>`;
 
-  document.getElementById('quality-summary').innerHTML=`不良類型：<strong>${d.badTypes||'—'}</strong><br>報廢大宗品：<strong>${d.scrapItem||'—'}</strong>（${d.scrapQty} 個，${d.scrapRate}%）<br>不良總數：<strong>${d.badCount} 個</strong>　金額：<strong>$${(d.badCost||0).toLocaleString()}</strong><br>餅乾不良率：<strong>${pct(d.cookieRate)}</strong>　禮盒報廢率：<strong>${pct(d.boxScrapRate)}</strong>`;
-  document.getElementById('train-summary').innerHTML=`訓練時數：<strong style="font-size:22px">${d.trainingHours}</strong> hr<br>訓練小結：<strong>${d.trainingNote||'—'}</strong>`;
+  document.getElementById('quality-summary').innerHTML=`銝�舫��嚗<strong>${d.badTypes||'�\'}</strong><br>� 勗誥憭批��嚗<strong>${d.scrapItem||'�\'}</strong>嚗${d.scrapQty} �\嚗${d.scrapRate}%嚗<br>銝�舐蜇�賂�<strong>${d.badCount} �\</strong>�\\�憿嚗<strong>$${(d.badCost||0).toLocaleString()}</strong><br>擗銋曆��舐嚗<strong>${pct(d.cookieRate)}</strong>�\\蝳桃� 勗誥�嚗<strong>${pct(d.boxScrapRate)}</strong>`;
+  document.getElementById('train-summary').innerHTML=`閮蝺湔�賂�<strong style="font-size:22px">${d.trainingHours}</strong> hr<br>閮蝺游�蝯嚗<strong>${d.trainingNote||'�\'}</strong>`;
 
   if(isAdmin) fillInputs();
   renderQuality(); renderCompare(); renderReport(); renderTrainPreview();
@@ -743,17 +749,17 @@ function recentWeeks(n){ return Array.from({length:n},(_,i)=>curW-(n-1-i)).map(o
 function renderQuality(){
   const ws=recentWeeks(8), d=getW(curW), maxCost=Math.max(...ws.map(w=>w.d.badCost),1);
   document.getElementById('q-kpi').innerHTML=[
-    {l:'本週不良總數',v:(d.badCount||0)+' 個'},
-    {l:'本週不良金額',v:'$'+(d.badCost||0).toLocaleString()},
-    {l:'餅乾不良率',v:pct(d.cookieRate)},
-    {l:'禮盒報廢率',v:pct(d.boxScrapRate)},
+    {l:'�祇\曹��舐蜇��',v:(d.badCount||0)+' �\'},
+    {l:'�祇\曹��舫憿',v:'$'+(d.badCost||0).toLocaleString()},
+    {l:'擗銋曆��舐',v:pct(d.cookieRate)},
+    {l:'蝳桃� 勗誥�',v:pct(d.boxScrapRate)},
   ].map(m=>`<div class="mc"><div class="mc-l">${m.l}</div><div class="mc-v">${m.v}</div></div>`).join('');
   document.getElementById('q-trend').innerHTML=ws.map(w=>{
     const p=Math.round(w.d.badCost/maxCost*100),isc=w.o===curW;
     return `<div class="cbar"><div class="cbl" style="${isc?'font-weight:700':''}">${w.l}</div><div class="cbb"><div class="cbf" style="width:${Math.max(p,0)}%;background:${isc?'#E24B4A':'#F09595'};color:#fff">${w.d.badCost>0?'$'+w.d.badCost.toLocaleString():''}</div></div></div>`;
   }).join('');
   document.getElementById('q-table').innerHTML=[...ws].reverse().map(w=>
-    `<tr><td style="white-space:nowrap">${w.l}</td><td>${w.d.badTypes||'—'}</td><td>${w.d.scrapItem||'—'}</td><td>${w.d.scrapQty}</td><td>$${(w.d.badCost||0).toLocaleString()}</td><td>${pct(w.d.cookieRate)}</td><td>${pct(w.d.boxScrapRate)}</td></tr>`
+    `<tr><td style="white-space:nowrap">${w.l}</td><td>${w.d.badTypes||'�\'}</td><td>${w.d.scrapItem||'�\'}</td><td>${w.d.scrapQty}</td><td>$${(w.d.badCost||0).toLocaleString()}</td><td>${pct(w.d.cookieRate)}</td><td>${pct(w.d.boxScrapRate)}</td></tr>`
   ).join('');
 }
 
@@ -768,7 +774,7 @@ function renderCompare(){
     const p=Math.round(tot/maxProd*100),isc=w.o===curW;
     const planP=plan>0?Math.round(plan/maxProd*100):0;
     const rate=plan>0?Math.round(tot/plan*100):0;
-    return `<div class="cbar"><div class="cbl" style="${isc?'font-weight:700':''}">${w.l}</div><div class="cbb" style="position:relative"><div class="cbf" style="width:${Math.max(p,0)}%;background:${isc?'#1D9E75':'#9FE1CB'};color:${isc?'#fff':'#085041'}">${tot>0?tot.toLocaleString()+' 盒':''}</div>${plan>0?`<div style="position:absolute;top:0;left:${Math.min(planP,100)}%;width:2px;height:100%;background:#1a1a1a;opacity:0.5" title="計畫 ${plan.toLocaleString()} 盒"></div>`:''}${plan>0&&tot>0?`<span style="position:absolute;right:4px;top:2px;font-size:9px;color:#888">${rate}%</span>`:''}</div></div>`;
+    return `<div class="cbar"><div class="cbl" style="${isc?'font-weight:700':''}">${w.l}</div><div class="cbb" style="position:relative"><div class="cbf" style="width:${Math.max(p,0)}%;background:${isc?'#1D9E75':'#9FE1CB'};color:${isc?'#fff':'#085041'}">${tot>0?tot.toLocaleString()+' �':''}</div>${plan>0?`<div style="position:absolute;top:0;left:${Math.min(planP,100)}%;width:2px;height:100%;background:#1a1a1a;opacity:0.5" title="閮�� ${plan.toLocaleString()} �"></div>`:''}${plan>0&&tot>0?`<span style="position:absolute;right:4px;top:2px;font-size:9px;color:#888">${rate}%</span>`:''}</div></div>`;
   }).join('');
   document.getElementById('cmp-eff').innerHTML=ws.map(w=>{
     const e=w.d.totalHours>0?Math.round(calcTheory(w.d)/w.d.totalHours*100):0,isc=w.o===curW;
@@ -790,46 +796,46 @@ function renderReport(){
   const hasPlan = !!(d.plannedWedding || d.plannedBaby || d.plannedFestival);
   const plannedTotal = (d.plannedWedding||0)+(d.plannedBaby||0)+(d.plannedFestival||0);
   const warns=[];
-  if(diff<-2) warns.push(`實際生產工時超出理論工時 ${Math.abs(diff)} hr，建議確認人員效率或流程問題`);
-  if(d.cookieRate*100>1) warns.push(`餅乾不良率 ${pct(d.cookieRate)}，建議追查原因`);
-  if(d.boxScrapRate*100>1) warns.push(`禮盒報廢率 ${pct(d.boxScrapRate)}，建議檢討包裝流程`);
-  if(d.badCost>5000) warns.push(`本週不良金額 $${d.badCost.toLocaleString()}，建議列入品質會議討論`);
-  if(hasPlan && plannedTotal>0 && totalBox>0 && Math.round(totalBox/plannedTotal*100)<90) warns.push(`計畫達成率 ${Math.round(totalBox/plannedTotal*100)}%，低於 90% 目標`);
-  // 計畫達成（從排程工具推送的數據）
+  if(diff<-2) warns.push(`撖阡��Ｗ極�頞�箇隢撌交 ${Math.abs(diff)} hr嚗撱箄降蝣箄�鈭箏⊥��瘚蝔�憿`);
+  if(d.cookieRate*100>1) warns.push(`擗銋曆��舐 ${pct(d.cookieRate)}嚗撱箄降餈賣亙� `);
+  if(d.boxScrapRate*100>1) warns.push(`蝳桃� 勗誥� ${pct(d.boxScrapRate)}嚗撱箄降瑼Ｚ��鋆瘚蝔`);
+  if(d.badCost>5000) warns.push(`�祇\曹��舫憿 $${d.badCost.toLocaleString()}嚗撱箄降��亙鞈芣霅啗�隢`);
+  if(hasPlan && plannedTotal>0 && totalBox>0 && Math.round(totalBox/plannedTotal*100)<90) warns.push(`閮�恍�� ${Math.round(totalBox/plannedTotal*100)}%嚗雿�� 90% �格�`);
+  // 閮�恍�嚗敺�蝔撌亙瑟券\��豢嚗
   let planHtml='';
   if(hasPlan){
     const rateW=d.plannedWedding>0?Math.round(d.weddingCount/d.plannedWedding*100)+'%':'-';
     const rateB=d.plannedBaby>0?Math.round(d.babyCount/d.plannedBaby*100)+'%':'-';
     const rateT=plannedTotal>0?Math.round(totalBox/plannedTotal*100)+'%':'-';
-    planHtml=`<div style="font-weight:600;color:#1a1a1a;margin-top:10px;margin-bottom:2px">計畫達成</div>
-      計畫盒數：<strong>${plannedTotal.toLocaleString()} 盒</strong>（婚禮 ${d.plannedWedding}、彌月 ${d.plannedBaby}、節慶 ${d.plannedFestival}）<br>
-      達成率：婚禮 <strong>${rateW}</strong>　彌月 <strong>${rateB}</strong>　總計 <strong>${rateT}</strong><br>`;
+    planHtml=`<div style="font-weight:600;color:#1a1a1a;margin-top:10px;margin-bottom:2px">閮�恍�</div>
+      閮�怎�賂�<strong>${plannedTotal.toLocaleString()} �</strong>嚗憍蝳� ${d.plannedWedding}�\敶� ${d.plannedBaby}�\蝭\�� ${d.plannedFestival}嚗<br>
+      ���嚗憍蝳� <strong>${rateW}</strong>�\\敶� <strong>${rateB}</strong>�\\蝮質� <strong>${rateT}</strong><br>`;
     if(d.plannedTotalHours){
-      planHtml+=`計畫人時：<strong>${d.plannedTotalHours} hr</strong>（生產 ${d.plannedProductionHours||0} + 摺盒 ${d.plannedFoldHours||0}）<br>`;
+      planHtml+=`閮�思犖�嚗<strong>${d.plannedTotalHours} hr</strong>嚗��� ${d.plannedProductionHours||0} + �箇 ${d.plannedFoldHours||0}嚗<br>`;
     }
   }
   document.getElementById('rpt-content').innerHTML=`
-    <div style="font-size:15px;font-weight:600;margin-bottom:1rem">週報摘要 · ${wlabel(curW)}</div>
+    <div style="font-size:15px;font-weight:600;margin-bottom:1rem">�\勗 望閬 繚 ${wlabel(curW)}</div>
     <div class="info-row">
-      <div style="font-weight:600;color:#1a1a1a;margin-bottom:2px">產能</div>
-      本週總組裝：<strong>${totalBox.toLocaleString()} 盒</strong>（婚禮 ${d.weddingCount}、彌月 ${d.babyCount}、節慶 ${d.festivalCount}）<br>
+      <div style="font-weight:600;color:#1a1a1a;margin-bottom:2px">�Ｚ�</div>
+      �祇\梁蜇蝯鋆嚗<strong>${totalBox.toLocaleString()} �</strong>嚗憍蝳� ${d.weddingCount}�\敶� ${d.babyCount}�\蝭\�� ${d.festivalCount}嚗<br>
       ${planHtml}
-      <div style="font-weight:600;color:#1a1a1a;margin-top:10px;margin-bottom:2px">工時分析</div>
-      總人時：${d.totalHours} hr　生產工時：${d.productionHours} hr　摺盒：${d.boxFoldingCount} hr<br>
-      理論工時：${theory} hr　工時效率：${effPct}%　工時差異：${diff>=0?'+':''}${diff} hr<br>
-      <div style="font-weight:600;color:#1a1a1a;margin-top:10px;margin-bottom:2px">品質</div>
-      不良類型：${d.badTypes||'—'}　報廢大宗品：${d.scrapItem||'—'}（${d.scrapQty} 個，${d.scrapRate}%）<br>
-      不良總數：${d.badCount} 個　金額：$${(d.badCost||0).toLocaleString()}　餅乾不良率：${pct(d.cookieRate)}　禮盒報廢率：${pct(d.boxScrapRate)}<br>
-      <div style="font-weight:600;color:#1a1a1a;margin-top:10px;margin-bottom:2px">教育訓練</div>
-      本週訓練 ${d.trainingHours} hr${d.trainingNote?'，訓練小結：'+d.trainingNote:''}
-      ${warns.length?'<div style="margin-top:12px;font-weight:600">注意事項</div>'+warns.map(w=>`<div class="warn-box">${w}</div>`).join(''):''}
+      <div style="font-weight:600;color:#1a1a1a;margin-top:10px;margin-bottom:2px">撌交��</div>
+      蝮賭犖�嚗${d.totalHours} hr�\\��Ｗ極�嚗${d.productionHours} hr�\\�箇嚗${d.boxFoldingCount} hr<br>
+      �隢撌交嚗${theory} hr�\\撌交��嚗${effPct}%�\\撌交撌桃堆�${diff>=0?'+':''}${diff} hr<br>
+      <div style="font-weight:600;color:#1a1a1a;margin-top:10px;margin-bottom:2px">�鞈�</div>
+      銝�舫��嚗${d.badTypes||'�\'}�\\� 勗誥憭批��嚗${d.scrapItem||'�\'}嚗${d.scrapQty} �\嚗${d.scrapRate}%嚗<br>
+      銝�舐蜇�賂�${d.badCount} �\�\\�憿嚗$${(d.badCost||0).toLocaleString()}�\\擗銋曆��舐嚗${pct(d.cookieRate)}�\\蝳桃� 勗誥�嚗${pct(d.boxScrapRate)}<br>
+      <div style="font-weight:600;color:#1a1a1a;margin-top:10px;margin-bottom:2px">��脰�蝺�</div>
+      �祇\梯�蝺� ${d.trainingHours} hr${d.trainingNote?'嚗閮蝺游�蝯嚗'+d.trainingNote:''}
+      ${warns.length?'<div style="margin-top:12px;font-weight:600">瘜冽鈭� </div>'+warns.map(w=>`<div class="warn-box">${w}</div>`).join(''):''}
     </div>`;
 }
 
 function exportReport(){
   const d=getW(curW),totalBox=d.weddingCount+d.babyCount+d.festivalCount;
   const theory=calcTheory(d),effPct=d.totalHours>0?Math.round(theory/d.totalHours*100):0,diff=round2(theory-d.productionHours);
-  // 從 API 讀取計畫盒數
+  // 敺 API 霈\�閮�怎��
   const hasPlanE = !!(d.plannedWedding || d.plannedBaby || d.plannedFestival);
   let planSection='';
   if(hasPlanE){
@@ -837,11 +843,11 @@ function exportReport(){
     const rateW=d.plannedWedding>0?Math.round(d.weddingCount/d.plannedWedding*100):'-';
     const rateB=d.plannedBaby>0?Math.round(d.babyCount/d.plannedBaby*100):'-';
     const rateT=planTotal>0?Math.round(totalBox/planTotal*100):'-';
-    planSection=`\n\n■ 計畫達成\n  計畫：${planTotal} 盒（婚禮 ${d.plannedWedding}、彌月 ${d.plannedBaby}、節慶 ${d.plannedFestival}）\n  達成率：婚禮 ${rateW}%　彌月 ${rateB}%　總計 ${rateT}%`;
-    if(d.plannedTotalHours) planSection+=`\n  計畫人時：${d.plannedTotalHours} hr（生產 ${d.plannedProductionHours||0} + 摺盒 ${d.plannedFoldHours||0}）`;
+    planSection=`\n\n�  閮�恍�\n  閮�恬�${planTotal} �嚗憍蝳� ${d.plannedWedding}�\敶� ${d.plannedBaby}�\蝭\�� ${d.plannedFestival}嚗\n  ���嚗憍蝳� ${rateW}%�\\敶� ${rateB}%�\\蝮質� ${rateT}%`;
+    if(d.plannedTotalHours) planSection+=`\n  閮�思犖�嚗${d.plannedTotalHours} hr嚗��� ${d.plannedProductionHours||0} + �箇 ${d.plannedFoldHours||0}嚗`;
   }
-  const text=`【組裝部週報】${wlabel(curW)}\n\n■ 產能\n  總組裝：${totalBox} 盒（婚禮 ${d.weddingCount}、彌月 ${d.babyCount}、節慶 ${d.festivalCount}）${planSection}\n\n■ 工時分析\n  總人時：${d.totalHours} hr　生產：${d.productionHours} hr　摺盒：${d.boxFoldingCount} hr\n  理論工時：${theory} hr　效率：${effPct}%　差異：${diff>=0?'+':''}${diff} hr\n\n■ 品質\n  不良：${d.badTypes||'—'}　報廢：${d.scrapItem||'—'}（${d.scrapQty} 個）\n  不良數：${d.badCount}　金額：$${d.badCost}　餅乾不良率：${pct(d.cookieRate)}　禮盒報廢率：${pct(d.boxScrapRate)}\n\n■ 教育訓練\n  ${d.trainingHours} hr　${d.trainingNote||'—'}`;
-  navigator.clipboard.writeText(text).then(()=>alert('已複製！可貼到 Line 或 Email。')).catch(()=>prompt('請手動複製：',text));
+  const text=`�\蝯鋆�券\勗 晞\${wlabel(curW)}\n\n�  �Ｚ穀n  蝮賜�鋆嚗${totalBox} �嚗憍蝳� ${d.weddingCount}�\敶� ${d.babyCount}�\蝭\�� ${d.festivalCount}嚗${planSection}\n\n�  撌交��\n  蝮賭犖�嚗${d.totalHours} hr�\\��ｇ�${d.productionHours} hr�\\�箇嚗${d.boxFoldingCount} hr\n  �隢撌交嚗${theory} hr�\\��嚗${effPct}%�\\撌桃堆�${diff>=0?'+':''}${diff} hr\n\n�  �鞈歿n  銝�荔�${d.badTypes||'�\'}�\\� 勗誥嚗${d.scrapItem||'�\'}嚗${d.scrapQty} �\嚗\n  銝�舀賂�${d.badCount}�\\�憿嚗$${d.badCost}�\\擗銋曆��舐嚗${pct(d.cookieRate)}�\\蝳桃� 勗誥�嚗${pct(d.boxScrapRate)}\n\n�  ��脰�蝺廄n  ${d.trainingHours} hr�\\${d.trainingNote||'�\'}`;
+  navigator.clipboard.writeText(text).then(()=>alert('撌脰�鋆踝��航票�� Line � Email�\')).catch(()=>prompt('隢��銴鋆踝�',text));
 }
 
 function st(name,btn){
@@ -854,18 +860,18 @@ function st(name,btn){
 }
 function cw(dir){ curW+=dir; render(); }
 
-// ---- 人員技能系統 ----
-const SKILL_LEVELS = ['基本','獨立','熟練','異常處理'];
+// ---- 鈭箏⊥\�賜頂蝯� ----
+const SKILL_LEVELS = ['�箸�','�函�','�蝺�','�啣虜��'];
 const SKILL_COLORS = ['sk-0','sk-1','sk-2','sk-3'];
 const STORE_STAFF_KEY = 'asm_staff_v1';
 let staffSaving = false;
 
 async function loadStaffData(){
-  // 先從 localStorage 載入作為暫存
+  // �敺 localStorage 頛�乩��箸怠�
   try{ const r=localStorage.getItem(STORE_STAFF_KEY); if(r) staffData=JSON.parse(r); }catch(e){}
   if(!staffData.members) staffData.members=[];
-  if(!staffData.stations) staffData.stations=['備貨站','組裝站','包裝站','出貨站','品檢站'];
-  // 從 Google Sheets 同步最新資料（覆蓋本機）
+  if(!staffData.stations) staffData.stations=['�鞎函�','蝯鋆蝡','�鋆蝡','�箄疏蝡','�瑼Ｙ�'];
+  // 敺 Google Sheets �甇交\�啗��嚗閬��祆�嚗
   try{
     const res = await fetch(API_URL+'?action=read_staff');
     const json = await res.json();
@@ -878,20 +884,20 @@ async function loadStaffData(){
 }
 
 async function saveStaffData(toSheets=false){
-  // 永遠存 localStorage（快速暫存）
+  // 瘞賊 摮 localStorage嚗敹恍\�怠�嚗
   try{ localStorage.setItem(STORE_STAFF_KEY,JSON.stringify(staffData)); }catch(e){}
-  // 只有明確要求且是管理員才寫入 Google Sheets
+  // �芣�蝣箄�瘙銝�舐恣��⊥撖怠� Google Sheets
   if(!toSheets || !adminPwd) return;
   if(staffSaving) return;
   staffSaving = true;
-  document.getElementById('sstatus').textContent='技能資料儲存中…';
+  document.getElementById('sstatus').textContent='�\�質���脣�銝凌\�';
   try{
     const base = API_URL+'?action=write_staff&pwd='+encodeURIComponent(adminPwd);
     await fetch(base+'&key=members&payload='+encodeURIComponent(JSON.stringify(staffData.members)));
     await fetch(base+'&key=stations&payload='+encodeURIComponent(JSON.stringify(staffData.stations)));
-    document.getElementById('sstatus').textContent='技能資料已儲存 · '+new Date().toLocaleTimeString('zh-TW');
+    document.getElementById('sstatus').textContent='�\�質��撌脣脣� 繚 '+new Date().toLocaleTimeString('zh-TW');
   }catch(e){
-    document.getElementById('sstatus').textContent='技能儲存失敗，請重試';
+    document.getElementById('sstatus').textContent='�\�賢脣�憭望嚗隢�閰�';
   }
   staffSaving = false;
 }
@@ -904,16 +910,16 @@ function getMemberSkills(memberName){
 function getSkillLevel(memberName, station){
   const m=staffData.members.find(m=>m.name===memberName);
   if(!m) return 0;
-  // 先找本週
+  // ��暹祇\�
   if(m.weeklySkills&&m.weeklySkills[wkey(curW)]&&m.weeklySkills[wkey(curW)][station]!==undefined)
     return m.weeklySkills[wkey(curW)][station];
-  // 找不到本週就往前找最近一週有記錄的
+  // �曆��唳祇\勗停敺\��暹\餈銝\�\望閮��
   for(let i=1;i<=52;i++){
     const k=wkey(curW-i);
     if(m.weeklySkills&&m.weeklySkills[k]&&m.weeklySkills[k][station]!==undefined)
       return m.weeklySkills[k][station];
   }
-  // 舊資料相容
+  // �鞈��詨捆
   return m.skills&&m.skills[station]!==undefined ? m.skills[station] : 0;
 }
 
@@ -922,7 +928,7 @@ function setSkillLevel(memberName, station, level){
   if(!m){ m={name:memberName,weeklySkills:{},weeklyNote:{}}; staffData.members.push(m); }
   if(!m.weeklySkills) m.weeklySkills={};
   if(!m.weeklySkills[wkey(curW)]) {
-    // 初始化本週：帶入上週的所有站別等級
+    // �憪��祇\梧�撣嗅乩��\梁�\�蝡�亦�蝝
     m.weeklySkills[wkey(curW)]={};
     staffData.stations.forEach(st=>{
       m.weeklySkills[wkey(curW)][st]=getSkillLevel(memberName,st);
@@ -945,7 +951,7 @@ function setWeeklyNote(memberName, note){
 function addStaff(){
   const name=document.getElementById('new-staff-name').value.trim();
   if(!name) return;
-  if(staffData.members.find(m=>m.name===name)){ alert('此人員已存在'); return; }
+  if(staffData.members.find(m=>m.name===name)){ alert('甇支犖�∪歇摮��'); return; }
   staffData.members.push({name,skills:{},weeklyNote:{}});
   saveStaffData(true); renderStaffTab(); renderTrainPreview();
   document.getElementById('new-staff-name').value='';
@@ -954,38 +960,38 @@ function addStaff(){
 function addStation(){
   const name=document.getElementById('new-station-name').value.trim();
   if(!name) return;
-  if(staffData.stations.includes(name)){ alert('此站別已存在'); return; }
+  if(staffData.stations.includes(name)){ alert('甇斤��亙歇摮��'); return; }
   staffData.stations.push(name);
   saveStaffData(true); renderStaffTab();
   document.getElementById('new-station-name').value='';
 }
 
 function deleteStaff(memberName){
-  if(!confirm(`確定要刪除「${memberName}」？此操作無法復原`)) return;
+  if(!confirm(`蝣箏�閬�芷扎\${memberName}�\嚗甇斗雿�⊥�敺拙`)) return;
   staffData.members=staffData.members.filter(m=>m.name!==memberName);
   saveStaffData(true); renderStaffTab(); renderTrainPreview();
 }
 
 function renameStaff(oldName){
-  const newName=prompt(`修改姓名（目前：${oldName}）`,oldName);
+  const newName=prompt(`靽格孵��嚗�桀嚗${oldName}嚗`,oldName);
   if(!newName||newName.trim()===''||newName===oldName) return;
-  if(staffData.members.find(m=>m.name===newName.trim())){ alert('此姓名已存在'); return; }
+  if(staffData.members.find(m=>m.name===newName.trim())){ alert('甇文��撌脣���'); return; }
   const m=staffData.members.find(m=>m.name===oldName);
   if(m) m.name=newName.trim();
   saveStaffData(true); renderStaffTab(); renderTrainPreview();
 }
 
 function deleteStation(stationName){
-  if(!confirm(`確定要刪除站別「${stationName}」？所有人員此站別的等級資料也會清除`)) return;
+  if(!confirm(`蝣箏�閬�芷斤��乓\${stationName}�\嚗�\�鈭箏⊥迨蝡�亦蝑蝝鞈�銋�皜�亡)) return;
   staffData.stations=staffData.stations.filter(s=>s!==stationName);
   staffData.members.forEach(m=>{ if(m.skills) delete m.skills[stationName]; });
   saveStaffData(true); renderStaffTab();
 }
 
 function renameStation(oldName){
-  const newName=prompt(`修改站別名稱（目前：${oldName}）`,oldName);
+  const newName=prompt(`靽格寧��亙蝔梧��桀嚗${oldName}嚗`,oldName);
   if(!newName||newName.trim()===''||newName===oldName) return;
-  if(staffData.stations.includes(newName.trim())){ alert('此站別已存在'); return; }
+  if(staffData.stations.includes(newName.trim())){ alert('甇斤��亙歇摮��'); return; }
   const idx=staffData.stations.indexOf(oldName);
   if(idx>-1) staffData.stations[idx]=newName.trim();
   staffData.members.forEach(m=>{
@@ -998,7 +1004,7 @@ function renameStation(oldName){
 }
 
 async function saveStaffWeek(){
-  // 確保本週所有人的技能都初始化並存成獨立快照
+  // 蝣箔��祇\望\�鈭箇�\�賡賢憪�銝血���函�敹怎�
   staffData.members.forEach(m=>{
     if(!m.weeklySkills) m.weeklySkills={};
     if(!m.weeklySkills[wkey(curW)]) {
@@ -1008,7 +1014,7 @@ async function saveStaffWeek(){
       });
     }
   });
-  await saveStaffData(true); // 寫入 Google Sheets
+  await saveStaffData(true); // 撖怠� Google Sheets
   const msg=document.getElementById('staff-smsg');
   msg.classList.remove('hide');
   setTimeout(()=>msg.classList.add('hide'),3000);
@@ -1021,23 +1027,23 @@ function renderStaffTab(){
     document.getElementById('staff-save-btn').classList.remove('hide');
   }
   const wl=document.getElementById('staff-week-label');
-  if(wl) wl.textContent='· '+wlabel(curW);
+  if(wl) wl.textContent='繚 '+wlabel(curW);
 
-  // 站別管理列表
+  // 蝡�亦恣��銵�
   document.getElementById('station-list-display').innerHTML = staffData.stations.length
     ? staffData.stations.map(s=>
         isAdmin
           ? `<span style="display:inline-flex;align-items:center;gap:3px;margin:2px 4px;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:6px;padding:2px 8px;font-size:11px">
               ${s}
-              <button class="sk-btn" onclick="renameStation('${s}')" title="修改" style="padding:1px 5px">✎</button>
-              <button class="sk-btn" onclick="deleteStation('${s}')" title="刪除" style="padding:1px 5px;color:#A32D2D">✕</button>
+              <button class="sk-btn" onclick="renameStation('${s}')" title="靽格�" style="padding:1px 5px">�</button>
+              <button class="sk-btn" onclick="deleteStation('${s}')" title="�芷�" style="padding:1px 5px;color:#A32D2D">�</button>
             </span>`
           : `<span style="margin:2px 4px;font-size:11px">${s}</span>`
       ).join('')
-    : '尚未設定';
+    : '撠�芾身摰';
 
   if(staffData.members.length===0){
-    document.getElementById('staff-grid').innerHTML=`<div style="color:#aaa;font-size:13px;padding:20px 0;grid-column:1/-1">尚無人員，請用管理員身份新增</div>`;
+    document.getElementById('staff-grid').innerHTML=`<div style="color:#aaa;font-size:13px;padding:20px 0;grid-column:1/-1">撠�∩犖�∴�隢�函恣��∟澈隞賣啣�</div>`;
     return;
   }
 
@@ -1048,19 +1054,19 @@ function renderStaffTab(){
       const btns = isAdmin ? `
         <div class="skill-controls">
           <span class="skill-tag ${SKILL_COLORS[lv]}">${SKILL_LEVELS[lv]}</span>
-          ${lv>0?`<button class="sk-btn" onclick="setSkillLevel('${m.name}','${st}',${lv-1})" title="降級">▼</button>`:''}
-          ${lv<3?`<button class="sk-btn" onclick="setSkillLevel('${m.name}','${st}',${lv+1})" title="升級">▲</button>`:''}
+          ${lv>0?`<button class="sk-btn" onclick="setSkillLevel('${m.name}','${st}',${lv-1})" title="�蝝">��</button>`:''}
+          ${lv<3?`<button class="sk-btn" onclick="setSkillLevel('${m.name}','${st}',${lv+1})" title="�蝝">��</button>`:''}
         </div>` :
         `<span class="skill-tag ${SKILL_COLORS[lv]}">${SKILL_LEVELS[lv]}</span>`;
       return `<div class="station-row"><span class="station-name">${st}</span>${btns}</div>`;
     }).join('');
     const adminControls = isAdmin
       ? `<div style="display:flex;gap:5px;margin-bottom:8px">
-          <button class="sk-btn" onclick="renameStaff('${m.name}')" style="font-size:11px;padding:3px 9px">✎ 修改姓名</button>
-          <button class="sk-btn" onclick="deleteStaff('${m.name}')" style="font-size:11px;padding:3px 9px;color:#A32D2D">✕ 刪除人員</button>
+          <button class="sk-btn" onclick="renameStaff('${m.name}')" style="font-size:11px;padding:3px 9px">� 靽格孵��</button>
+          <button class="sk-btn" onclick="deleteStaff('${m.name}')" style="font-size:11px;padding:3px 9px;color:#A32D2D">� �芷支犖��</button>
         </div>` : '';
     const noteField = isAdmin
-      ? `<div style="margin-top:10px"><input type="text" placeholder="本週訓練記錄…" value="${weekNote}" style="font-size:12px" onchange="setWeeklyNote('${m.name}',this.value)"></div>`
+      ? `<div style="margin-top:10px"><input type="text" placeholder="�祇\梯�蝺渲���\�" value="${weekNote}" style="font-size:12px" onchange="setWeeklyNote('${m.name}',this.value)"></div>`
       : weekNote ? `<div style="margin-top:8px;font-size:11px;color:#555;background:#fafaf8;border-radius:6px;padding:6px 9px">${weekNote}</div>` : '';
     return `<div class="staff-card">
       <div class="staff-name" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:${isAdmin?'6px':'10px'}">
@@ -1077,13 +1083,13 @@ function renderTrainPreview(){
   const el=document.getElementById('train-staff-preview');
   if(!el) return;
   const notedThisWeek=staffData.members.filter(m=>m.weeklyNote&&m.weeklyNote[wkey(curW)]);
-  if(notedThisWeek.length===0){ el.innerHTML='<div style="font-size:12px;color:#bbb">本週尚無個人訓練記錄</div>'; return; }
+  if(notedThisWeek.length===0){ el.innerHTML='<div style="font-size:12px;color:#bbb">�祇\勗��∪\鈭箄�蝺渲��</div>'; return; }
   el.innerHTML=notedThisWeek.map(m=>
-    `<div style="font-size:12px;color:#555;margin-bottom:5px"><strong style="color:#1a1a1a">${m.name}</strong>　${m.weeklyNote[wkey(curW)]}</div>`
+    `<div style="font-size:12px;color:#555;margin-bottom:5px"><strong style="color:#1a1a1a">${m.name}</strong>�\\${m.weeklyNote[wkey(curW)]}</div>`
   ).join('');
 }
 
-// ---- 啟動 ----
+// ---- �� ----
 let staffData = { members:[], stations:[] };
 async function init(){
   await loadFromServer();
@@ -1094,17 +1100,17 @@ async function init(){
 init();
 
 // =====================================================
-// ★ 生產排程模組
+// � ��Ｘ蝔璅∠�
 // =====================================================
 const SCHED_MEMBERS=[
-  {n:'宥蓉',line:1,st:'檢'},{n:'小武',line:1,st:'封'},{n:'小易',line:1,st:'備'},
-  {n:'小燕',line:1,st:'備'},{n:'雅玲',line:1,st:'入'},{n:'雅淳',line:1,st:'封'},
-  {n:'惠停',line:1,st:'封'},{n:'小林',line:1,st:'入'},
-  {n:'雅卉',line:2,st:'檢'},{n:'杜杜',line:2,st:'備'},{n:'承俊',line:2,st:'封'},
-  {n:'韋忠',line:2,st:'封'},{n:'kiki',line:2,st:'入'},{n:'金妹',line:2,st:'摺'}
+  {n:'摰亥',line:1,st:'瑼�'},{n:'撠甇�',line:1,st:'撠'},{n:'撠�',line:1,st:'�'},
+  {n:'撠�',line:1,st:'�'},{n:'���',line:1,st:'��'},{n:'�瘛�',line:1,st:'撠'},
+  {n:'� �',line:1,st:'撠'},{n:'撠�',line:1,st:'��'},
+  {n:'��',line:2,st:'瑼�'},{n:'��',line:2,st:'�'},{n:'�蹂�',line:2,st:'撠'},
+  {n:'�敹 ',line:2,st:'撠'},{n:'kiki',line:2,st:'��'},{n:'�憒�',line:2,st:'��'}
 ];
-const SCHED_DAYS=['週一','週二','週三','週四','週五'];
-const SCHED_SLOTS=['8:00~8:30','8:30~9:00','9:00~9:30','9:30~10:00','10:00~10:30','10:30~11:00','11:00~11:30','午休','午休','12:30~13:00','13:00~13:30','13:30~14:00','14:00~14:30','14:30~15:00','15:00~15:30','15:30~16:00','16:00~16:30','16:30~17:00'];
+const SCHED_DAYS=['�\曹�\','�\曹�','�\曹�','�\勗','�\曹�'];
+const SCHED_SLOTS=['8:00~8:30','8:30~9:00','9:00~9:30','9:30~10:00','10:00~10:30','10:30~11:00','11:00~11:30','�隡','�隡','12:30~13:00','13:00~13:30','13:30~14:00','14:00~14:30','14:30~15:00','15:00~15:30','15:30~16:00','16:00~16:30','16:30~17:00'];
 const SCHED_LUNCH=[7,8];
 const SCHED_CLEAN=17;
 const SCHED_FMAX=2000;
@@ -1113,17 +1119,17 @@ const SCHED_BABY_PPH=36;
 const SCHED_WORK_HOURS=7.5;
 
 const SCHED_WED_RATES={
-  '閃耀L':26.2,'閃耀M':25.8,'玫瑰L':28.7,'玫瑰M':34.3,
-  '花園L':21.6,'花園D':19.1,'客製L':24.0,'客製M':29.6
+  '��\\L':26.2,'��\\M':25.8,'�怎袂':28.7,'�怎衽':34.3,
+  '�勗L':21.6,'�勗D':19.1,'摰ＺˊL':24.0,'摰ＺˊM':29.6
 };
 const SCHED_BOX_MAP={
-  '閃耀':'閃耀','閃耀CP':'閃耀','玫瑰星空':'玫瑰','玫瑰星空_2407':'玫瑰',
-  '花園':'花園','極光之約':'客製','極光':'客製','雅典水藍':'閃耀','雅典':'閃耀','客製':'客製'
+  '��\\':'��\\','��\\CP':'��\\','�怎唳蝛�':'�怎�','�怎唳蝛榕2407':'�怎�',
+  '�勗':'�勗','璆萄銋蝝':'摰Ｚˊ','璆萄':'摰Ｚˊ','��豢偌�':'��\\','���':'��\\','摰Ｚˊ':'摰Ｚˊ'
 };
 function schedGetWedRate(boxName){
   const name=String(boxName).trim();
   let size='L';
-  if(/[Mm]|M1|M款/.test(name))size='M';
+  if(/[Mm]|M1|M甈�/.test(name))size='M';
   if(/XS/.test(name))size='M';
   if(name.includes('D'))size='D';
   for(const [key,val] of Object.entries(SCHED_BOX_MAP)){
@@ -1133,14 +1139,14 @@ function schedGetWedRate(boxName){
 }
 
 const SCHED_BASE_SEQ={
-  0:['台中門市（收週二三）','黑貓（收週二）','拉拉/滾單'],
-  1:['台北門市（收週三四）','黑貓（收週三）','拉拉/滾單'],
-  2:['台中門市（收週四五）','黑貓（收週四）','拉拉/滾單'],
-  3:['台北門市（收週五~下週一）','黑貓（收週五）','拉拉/滾單'],
-  4:['台中門市（收週六日下週一）','黑貓（收週六）','拉拉/滾單']
+  0:['�唬葉�\撣嚗�園\曹�銝嚗','暺鞎嚗�園\曹�嚗','��/皛曉�'],
+  1:['�啣�\撣嚗�園\曹��嚗','暺鞎嚗�園\曹�嚗','��/皛曉�'],
+  2:['�唬葉�\撣嚗�園\勗鈭嚗','暺鞎嚗�園\勗嚗','��/皛曉�'],
+  3:['�啣�\撣嚗�園\曹�~銝�\曹�\嚗','暺鞎嚗�園\曹�嚗','��/皛曉�'],
+  4:['�唬葉�\撣嚗�園\勗剜乩��\曹�\嚗','暺鞎嚗�園\勗哨�','��/皛曉�']
 };
 const SCHED_PROD_TO_DELIVERY={
-  0:['週三'],1:['週四'],2:['週五'],3:['週六','週日'],4:['週一','週二']
+  0:['�\曹�'],1:['�\勗'],2:['�\曹�'],3:['�\勗�','�\望�'],4:['�\曹�\','�\曹�']
 };
 
 let schedWeekDates=[], schedLeaveD={}, schedTrainD={}, schedExcelData=null;
@@ -1156,7 +1162,7 @@ function schedInit(){
     for(let i=0;i<5;i++){schedLeaveD[m.n][i]=false;schedTrainD[m.n][i]=false;}
   });
   for(let i=0;i<5;i++) schedHolidays[i]={on:false,mode:'defer'};
-  // 預設下週一
+  // � 閮凋��\曹�\
   const today=new Date(),day=today.getDay(),diff2=day===0?1:(day===1?0:8-day);
   const mon=new Date(today);mon.setDate(today.getDate()+diff2);
   const inp=document.getElementById('sched-weekStart');
@@ -1187,7 +1193,7 @@ function schedSetWeek(){
   schedWeekDates=[];
   for(let i=0;i<5;i++){const d=new Date(mon);d.setDate(mon.getDate()+i);schedWeekDates.push(d);}
   const fri=schedWeekDates[4];
-  document.getElementById('sched-weekLabel').textContent=`${schedSd(mon)}（一）– ${schedSd(fri)}（五）`;
+  document.getElementById('sched-weekLabel').textContent=`${schedSd(mon)}嚗銝\嚗�\ ${schedSd(fri)}嚗鈭嚗`;
   schedBuildHolidayBar();
 }
 
@@ -1196,7 +1202,7 @@ function schedUpdateFreezer(){
   const p=Math.min(100,(c/SCHED_FMAX)*100);
   const f=document.getElementById('sched-ffill');
   f.style.width=p+'%';f.className='ffill-sched'+(p>80?' full':p>60?' warn':'');
-  document.getElementById('sched-fLabel').textContent=`剩餘 ${SCHED_FMAX-c} 盒（${Math.round(p)}%）`;
+  document.getElementById('sched-fLabel').textContent=`�拚� ${SCHED_FMAX-c} �嚗${Math.round(p)}%嚗`;
 }
 
 function schedBuildHolidayBar(){
@@ -1208,7 +1214,7 @@ function schedBuildHolidayBar(){
     h+=`<div style="border:1px solid ${checked?'#1a1a1a':'#ddd'};border-radius:8px;padding:8px 12px;min-width:100px;text-align:center;${checked?'background:#f5f5f3':''}">
       <div style="font-weight:600;font-size:12px;margin-bottom:4px">${SCHED_DAYS[i]} ${schedSd(d)}</div>
       <label style="font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px">
-        <input type="checkbox" class="att-cb-sched" ${checked?'checked':''} onchange="schedTogHoliday(${i},this.checked)"> 放假
+        <input type="checkbox" class="att-cb-sched" ${checked?'checked':''} onchange="schedTogHoliday(${i},this.checked)"> �曉
       </label>
     </div>`;
   });
@@ -1221,9 +1227,9 @@ function schedTogHoliday(di,checked){
   schedBuildHolidayBar();
 }
 
-// 特殊指令
+// �寞��隞�
 function schedAddOverride(){
-  schedOverrides.push({day:0,line:1,action:'fold',reason:'缺料',note:'',hours:0});
+  schedOverrides.push({day:0,line:1,action:'fold',reason:'蝻箸',note:'',hours:0});
   schedRenderOverrides();
 }
 function schedRemoveOverride(idx){schedOverrides.splice(idx,1);schedRenderOverrides();}
@@ -1234,7 +1240,7 @@ function schedUpdateOverride(idx,field,val){
 }
 function schedRenderOverrides(){
   const panel=document.getElementById('sched-overridePanel');
-  if(schedOverrides.length===0){panel.innerHTML='<div style="font-size:11px;color:#888">目前沒有特殊指令</div>';return;}
+  if(schedOverrides.length===0){panel.innerHTML='<div style="font-size:11px;color:#888">�桀瘝��寞��隞�</div>';return;}
   let h='';
   schedOverrides.forEach((o,i)=>{
     h+=`<div style="display:flex;gap:6px;align-items:center;padding:6px;background:#fafaf8;border:1px solid #eee;border-radius:8px;margin-bottom:6px;flex-wrap:wrap;font-size:12px">
@@ -1242,22 +1248,22 @@ function schedRenderOverrides(){
         ${SCHED_DAYS.map((d,di)=>`<option value="${di}"${o.day===di?' selected':''}>${d}</option>`).join('')}
       </select>
       <select onchange="schedUpdateOverride(${i},'line',this.value)" style="padding:4px;border-radius:6px;border:1px solid #ddd;font-size:12px">
-        <option value="1"${o.line===1?' selected':''}>1線</option><option value="2"${o.line===2?' selected':''}>2線</option>
+        <option value="1"${o.line===1?' selected':''}>1蝺</option><option value="2"${o.line===2?' selected':''}>2蝺</option>
       </select>
       <select onchange="schedUpdateOverride(${i},'action',this.value)" style="padding:4px;border-radius:6px;border:1px solid #ddd;font-size:12px">
-        <option value="fold"${o.action==='fold'?' selected':''}>摺盒</option>
-        <option value="fold_pm"${o.action==='fold_pm'?' selected':''}>下午摺盒</option>
-        <option value="other"${o.action==='other'?' selected':''}>其他</option>
+        <option value="fold"${o.action==='fold'?' selected':''}>�箇</option>
+        <option value="fold_pm"${o.action==='fold_pm'?' selected':''}>銝��箇</option>
+        <option value="other"${o.action==='other'?' selected':''}>�嗡�</option>
       </select>
       <input type="number" step="0.5" min="0" max="7.5" value="${o.hours||0}" style="width:50px;padding:4px;border:1px solid #ddd;border-radius:6px;font-size:12px;text-align:center" onchange="schedUpdateOverride(${i},'hours',this.value)">h
       <select onchange="schedUpdateOverride(${i},'reason',this.value)" style="padding:4px;border-radius:6px;border:1px solid #ddd;font-size:12px">
-        <option value="缺料"${o.reason==='缺料'?' selected':''}>缺料</option>
-        <option value="備貨"${o.reason==='備貨'?' selected':''}>備貨</option>
-        <option value="凍庫滿"${o.reason==='凍庫滿'?' selected':''}>凍庫滿</option>
-        <option value="其他"${o.reason==='其他'?' selected':''}>其他</option>
+        <option value="蝻箸"${o.reason==='蝻箸'?' selected':''}>蝻箸</option>
+        <option value="�鞎�"${o.reason==='�鞎�'?' selected':''}>�鞎�</option>
+        <option value="�摨急遛"${o.reason==='�摨急遛'?' selected':''}>�摨急遛</option>
+        <option value="�嗡�"${o.reason==='�嗡�'?' selected':''}>�嗡�</option>
       </select>
-      <input type="text" placeholder="備註" value="${o.note||''}" style="flex:1;min-width:60px;padding:4px;border:1px solid #ddd;border-radius:6px;font-size:12px" oninput="schedUpdateOverride(${i},'note',this.value)">
-      <button onclick="schedRemoveOverride(${i})" style="background:none;border:none;color:#A32D2D;cursor:pointer;font-size:14px">✕</button>
+      <input type="text" placeholder="�閮�" value="${o.note||''}" style="flex:1;min-width:60px;padding:4px;border:1px solid #ddd;border-radius:6px;font-size:12px" oninput="schedUpdateOverride(${i},'note',this.value)">
+      <button onclick="schedRemoveOverride(${i})" style="background:none;border:none;color:#A32D2D;cursor:pointer;font-size:14px">�</button>
     </div>`;
   });
   panel.innerHTML=h;
@@ -1269,33 +1275,33 @@ function schedHandleDrop(e){e.preventDefault();schedHandleFile(e.dataTransfer.fi
 function schedHandleFile(file){
   if(!file)return;
   const st2=document.getElementById('sched-fileStatus');st2.style.display='block';
-  st2.innerHTML='<span style="color:#BA7517">讀取中…</span>';
+  st2.innerHTML='<span style="color:#BA7517">霈\�銝凌\�</span>';
   const r=new FileReader();
   r.onload=function(e){
     try{
       const wb=XLSX.read(e.target.result,{type:'array',cellDates:true});
       schedParseW1(wb);
-      st2.innerHTML=`<span style="color:#1D9E75">✓ ${file.name}</span>`;
+      st2.innerHTML=`<span style="color:#1D9E75">� ${file.name}</span>`;
     }catch(err){
-      st2.innerHTML=`<span style="color:#A32D2D">✗ ${err.message}</span>`;
+      st2.innerHTML=`<span style="color:#A32D2D">� ${err.message}</span>`;
     }
   };
   r.readAsArrayBuffer(file);
 }
 
 function schedParseW1(wb){
-  const sn='禮盒表單(W1)';
-  if(!wb.SheetNames.includes(sn)){alert('找不到 禮盒表單(W1)');return;}
+  const sn='蝳桃銵典�(W1)';
+  if(!wb.SheetNames.includes(sn)){alert('�曆��� 蝳桃銵典�(W1)');return;}
   const ws=wb.Sheets[sn];
   const rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:null,raw:true});
   let wTotR=-1,fTotR=-1,bTotR=-1,wDateR=-1;
   for(let i=0;i<rows.length;i++){
     const r2=rows[i];if(!r2||r2[0]==null)continue;
     const c=String(r2[0]).trim();
-    if(c==='婚禮'&&wDateR<0)wDateR=i;
-    if(c==='婚禮總計')wTotR=i;
-    if(c==='年節總計')fTotR=i;
-    if(c==='彌月總計')bTotR=i;
+    if(c==='憍蝳�'&&wDateR<0)wDateR=i;
+    if(c==='憍蝳桃蜇閮')wTotR=i;
+    if(c==='撟渡�\蝮質�')fTotR=i;
+    if(c==='敶�蝮質�')bTotR=i;
   }
   function pn(v){if(v==null)return 0;if(typeof v==='number')return Math.round(v);return Math.round(parseFloat(String(v).replace(/,/g,''))||0);}
   function getRow(ri){
@@ -1325,7 +1331,7 @@ function schedParseW1(wb){
     for(let i=wDateR+4;i<wTotR;i++){
       const r2=rows[i];if(!r2||r2[0]==null)continue;
       const name=String(r2[0]).trim();
-      if(!name||name.includes('總數')||name.includes('總計'))continue;
+      if(!name||name.includes('蝮賣�')||name.includes('蝮質�'))continue;
       const daily=[];for(let c=1;c<=7;c++)daily.push(pn(r2[c]));
       const total=daily.reduce((a,b2)=>a+b2,0);
       if(total>0) wBoxTypes.push({name,daily,total,rate:schedGetWedRate(name)});
@@ -1334,14 +1340,14 @@ function schedParseW1(wb){
   let bDateR=-1;
   for(let i=0;i<rows.length;i++){
     const r2=rows[i];if(!r2||r2[0]==null)continue;
-    if(String(r2[0]).trim()==='彌月'){bDateR=i;break;}
+    if(String(r2[0]).trim()==='敶�'){bDateR=i;break;}
   }
   const bBoxTypes=[];
   if(bDateR>=0&&bTotR>=0){
     for(let i=bDateR+4;i<bTotR;i++){
       const r2=rows[i];if(!r2||r2[0]==null)continue;
       const name=String(r2[0]).trim();
-      if(!name||name.includes('總數')||name.includes('總計'))continue;
+      if(!name||name.includes('蝮賣�')||name.includes('蝮質�'))continue;
       const daily=[];for(let c=1;c<=7;c++)daily.push(pn(r2[c]));
       const total=daily.reduce((a,b2)=>a+b2,0);
       if(total>0) bBoxTypes.push({name,daily,total});
@@ -1353,12 +1359,12 @@ function schedParseW1(wb){
   document.getElementById('sched-dBaby').textContent=b.t.toLocaleString();
   document.getElementById('sched-dFest').textContent=f.t.toLocaleString();
   // Daily table
-  let th='<tr><th style="text-align:left">類別</th>';
+  let th='<tr><th style="text-align:left">憿��</th>';
   dates.forEach((d,i)=>{const dn=dayNames[i]||'';th+=`<th>${d?schedSd(d):'-'}<br><span style="font-size:9px">${dn}</span></th>`;});
-  th+='<th>合計</th></tr>';
+  th+='<th>�閮</th></tr>';
   document.getElementById('sched-dailyThead').innerHTML=th;
   let tb='';
-  [{l:'婚禮',c:'#1D9E75',r:w},{l:'彌月',c:'#378ADD',r:b},{l:'節慶',c:'#BA7517',r:f}].forEach(x=>{
+  [{l:'憍蝳�',c:'#1D9E75',r:w},{l:'敶�',c:'#378ADD',r:b},{l:'蝭\��',c:'#BA7517',r:f}].forEach(x=>{
     tb+=`<tr><td style="font-weight:600;color:${x.c}">${x.l}</td>`;
     x.r.d.forEach(v=>{tb+=`<td style="font-weight:${v>0?700:400}">${v||'-'}</td>`;});
     tb+=`<td style="font-weight:700">${x.r.t.toLocaleString()}</td></tr>`;
@@ -1373,19 +1379,19 @@ function schedParseW1(wb){
     for(let i=0;i<5;i++){const d=new Date(mon);d.setDate(mon.getDate()+i);schedWeekDates.push(d);}
     const inp=document.getElementById('sched-weekStart');
     inp.value=schedFd(mon);
-    document.getElementById('sched-weekLabel').textContent=`${schedSd(mon)}（一）– ${schedSd(schedWeekDates[4])}（五）`;
+    document.getElementById('sched-weekLabel').textContent=`${schedSd(mon)}嚗銝\嚗�\ ${schedSd(schedWeekDates[4])}嚗鈭嚗`;
     schedBuildHolidayBar();
   }
 }
 
-// 出勤表
+// �箏方”
 function schedBuildAttTables(){
   if(!schedWeekDates.length) return;
   schedBuildOneTable('sched-leaveThead','sched-leaveTbody',schedLeaveD,'slv');
   schedBuildOneTable('sched-trainThead','sched-trainTbody',schedTrainD,'str');
 }
 function schedBuildOneTable(theadId,tbodyId,obj,pfx){
-  let h='<tr><th style="text-align:left;min-width:50px">成員</th><th style="min-width:36px">線</th>';
+  let h='<tr><th style="text-align:left;min-width:50px">���</th><th style="min-width:36px">蝺</th>';
   schedWeekDates.forEach((d,i)=>{h+=`<th style="min-width:50px">${SCHED_DAYS[i]}<br>${schedSd(d)}</th>`;});
   h+='</tr>';
   document.getElementById(theadId).innerHTML=h;
@@ -1405,20 +1411,20 @@ function schedTogAtt(cb){
   o[cb.dataset.n][parseInt(cb.dataset.d)]=cb.checked;
 }
 
-// 凍庫出貨
+// �摨怠箄疏
 function schedGetFreezerShipOut(di){
   if(!schedExcelData||!schedExcelData.dayNames) return 0;
-  const targets=['週二','週三','週四','週五','週六'];
+  const targets=['�\曹�','�\曹�','�\勗','�\曹�','�\勗�'];
   const target=targets[di];if(!target) return 0;
   let total=0;
   schedExcelData.dayNames.forEach((dn,ci)=>{if(dn.trim()===target) total+=(schedExcelData.b.d[ci]||0);});
   return total;
 }
 
-// 到貨日佇列
+// �啗疏�乩��
 function schedGetDeliveryQueue(){
   if(!schedExcelData||!schedExcelData.dayNames) return [];
-  const order=['週三','週四','週五','週六','週日','週一','週二'];
+  const order=['�\曹�','�\勗','�\曹�','�\勗�','�\望�','�\曹�\','�\曹�'];
   const queue=[];
   order.forEach(dayName=>{
     const cols=[];
@@ -1433,7 +1439,7 @@ function schedGetDeliveryQueue(){
           if(qty>0) wDetails.push({name:bt.name,qty,rate:bt.rate});
         });
       }
-      queue.push({dayName,label:dayName.replace('週',''),cols,wBoxes,bBoxes,wDetails});
+      queue.push({dayName,label:dayName.replace('�\�',''),cols,wBoxes,bBoxes,wDetails});
     }
   });
   return queue;
@@ -1448,15 +1454,15 @@ function schedBuildOrderPlan(){
       const mode=schedHolidays[i].mode;let target=-1;
       if(mode==='advance'){for(let j=i-1;j>=0;j--){if(!schedHolidays[j]?.on){target=j;break;}}}
       else{for(let j=i+1;j<5;j++){if(!schedHolidays[j]?.on){target=j;break;}}}
-      if(target>=0) plan[target].push(...tasks.map(t=>`${t}【${SCHED_DAYS[i]}${mode==='advance'?'提前':'順延'}】`));
+      if(target>=0) plan[target].push(...tasks.map(t=>`${t}�\${SCHED_DAYS[i]}${mode==='advance'?'��':'� 撱�'}�\`));
     }
   }
   return plan;
 }
 
-// ====== 排程產生 ======
+// ====== �蝔�Ｙ ======
 function schedGenerateSchedule(){
-  if(!schedExcelData){alert('請先上傳 Excel');return;}
+  if(!schedExcelData){alert('隢�銝�� Excel');return;}
   const fc=parseInt(document.getElementById('sched-freezerCur').value)||0;
   const notes=document.getElementById('sched-weekNotes').value;
   let freezer=fc;
@@ -1479,7 +1485,7 @@ function schedGenerateSchedule(){
       } else {
         const ratio=wRemainHrs/batchHrs;
         const partialBoxes=Math.round(q.wBoxes*ratio);
-        wTotalBoxes+=partialBoxes;wDaysLabel.push(q.label+'(部分)');
+        wTotalBoxes+=partialBoxes;wDaysLabel.push(q.label+'(�典)');
         q.wBoxes-=partialBoxes;q.wDetails.forEach(d=>{d.qty=Math.round(d.qty*(1-ratio));});
         wRemainHrs=0;
       }
@@ -1491,7 +1497,7 @@ function schedGenerateSchedule(){
   let babyRemain=schedExcelData.b.t,babyTotalProduced=0;
   const babyCumulative=[];
   if(schedExcelData.dayNames){
-    const order=['週三','週四','週五','週六','週日','週一','週二'];
+    const order=['�\曹�','�\勗','�\曹�','�\勗�','�\望�','�\曹�\','�\曹�'];
     let cum=0;
     order.forEach(dayName=>{
       schedExcelData.dayNames.forEach((dn,ci)=>{
@@ -1503,7 +1509,7 @@ function schedGenerateSchedule(){
   let html='';
   if(notes){
     html+=`<div style="background:#FAEEDA;border:1px solid #FAC775;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12px">
-      <strong style="color:#633806">本週重點</strong><br>${notes.replace(/\n/g,'<br>')}</div>`;
+      <strong style="color:#633806">�祇\梢暺</strong><br>${notes.replace(/\n/g,'<br>')}</div>`;
   }
   for(let di=0;di<5;di++){
     const dp=dayPlans[di];
@@ -1512,18 +1518,18 @@ function schedGenerateSchedule(){
     const l2All=SCHED_MEMBERS.filter(m=>m.line===2);
     const seq=orderPlan[di]||[];
     if(dp.holiday){
-      html+=`<div class="day-card-sched"><div class="day-hdr-sched"><span>${SCHED_DAYS[di]} ${schedSd(date)}</span><span class="day-hdr-info">休假日</span></div>
-        <div style="padding:24px;text-align:center;color:#888">休假日 — 排程已順延</div></div>`;
+      html+=`<div class="day-card-sched"><div class="day-hdr-sched"><span>${SCHED_DAYS[di]} ${schedSd(date)}</span><span class="day-hdr-info">隡���</span></div>
+        <div style="padding:24px;text-align:center;color:#888">隡��� �\ �蝔撌脤 撱�</div></div>`;
       continue;
     }
     const l1Avail=dp.l1Av,l2Avail=dp.l2Av;
     const wTotalBoxes=dp.wTotalBoxes,wDaysLabel=dp.wDaysLabel,noWeddingOrders=dp.noWeddingOrders;
     const bCap=dp.bCap,wHrs=dp.wHrs;
     const dlvLabelW=wDaysLabel.length>0?wDaysLabel.join(''):'-';
-    // 凍庫
+    // �摨�
     const shipOut=schedGetFreezerShipOut(di);
     let shipNote='';
-    if(shipOut>0){freezer=Math.max(0,freezer-shipOut);shipNote=`出貨${shipOut}盒`;}
+    if(shipOut>0){freezer=Math.max(0,freezer-shipOut);shipNote=`�箄疏${shipOut}�`;}
     const freeSpace=SCHED_FMAX-freezer;
     const babyProduced=Math.min(bCap,freeSpace,babyRemain);
     const foldMorning=(freeSpace<=0)&&(babyRemain>0);
@@ -1531,11 +1537,11 @@ function schedGenerateSchedule(){
     const freezerEnd=freezer;
     const bHrs=l2Avail.length>0?babyProduced/(SCHED_BABY_PPH*l2Avail.length):0;
     const babyHasOrders=(babyProduced>0);
-    // 婚禮完成到哪天
+    // 憍蝳桀���啣芸予
     let wDoneDate='';
     if(wDaysLabel.length>0){
-      const lastLabel=wDaysLabel[wDaysLabel.length-1].replace('(部分)','');
-      const dayMap={'三':'週三','四':'週四','五':'週五','六':'週六','日':'週日','一':'週一','二':'週二'};
+      const lastLabel=wDaysLabel[wDaysLabel.length-1].replace('(�典)','');
+      const dayMap={'銝':'�\曹�','�':'�\勗','鈭':'�\曹�','��':'�\勗�','��':'�\望�','銝\':'�\曹�\','鈭':'�\曹�'};
       const targetDayName=dayMap[lastLabel];
       if(targetDayName&&schedExcelData.dayNames){
         schedExcelData.dayNames.forEach((dn,ci)=>{
@@ -1550,15 +1556,15 @@ function schedGenerateSchedule(){
         if(babyCumulative[bi].date) bDoneDate=schedSd(babyCumulative[bi].date);
       } else break;
     }
-    // 特殊指令
+    // �寞��隞�
     const ov1=schedGetOverride(di,1),ov2=schedGetOverride(di,2);
     const ov1Hrs=ov1.reduce((s,o)=>s+(o.hours||0),0);
     const ov2Hrs=ov2.reduce((s,o)=>s+(o.hours||0),0);
     const w1ForceFold=ov1.some(o=>o.action==='fold'&&(!o.hours||o.hours>=SCHED_WORK_HOURS));
     function ovText(ov){
       return ov.map(o=>{
-        const act=o.action==='fold'?'摺盒':o.action==='other'?(o.note||'其他'):o.action==='fold_pm'?'下午摺盒':'';
-        const h=o.hours?` ${o.hours}h`:'';return `${act}${h}（${o.reason}）`;
+        const act=o.action==='fold'?'�箇':o.action==='other'?(o.note||'�嗡�'):o.action==='fold_pm'?'銝��箇':'';
+        const h=o.hours?` ${o.hours}h`:'';return `${act}${h}嚗${o.reason}嚗`;
       }).join(' + ');
     }
     const ovReason1=ov1.length>0?ovText(ov1):'';
@@ -1566,20 +1572,20 @@ function schedGenerateSchedule(){
     const b2ForceFold=ov2.some(o=>o.action==='fold'&&(!o.hours||o.hours>=SCHED_WORK_HOURS));
 
     html+=`<div class="day-card-sched">`;
-    html+=`<div class="day-hdr-sched"><span>${SCHED_DAYS[di]} ${schedSd(date)}</span><span class="day-hdr-info">凍庫：${freezerEnd}/${SCHED_FMAX}${shipNote?' · '+shipNote:''}</span></div>`;
+    html+=`<div class="day-hdr-sched"><span>${SCHED_DAYS[di]} ${schedSd(date)}</span><span class="day-hdr-info">�摨恬�${freezerEnd}/${SCHED_FMAX}${shipNote?' 繚 '+shipNote:''}</span></div>`;
     html+=`<div class="day-body-sched">`;
 
-    // 1線 婚禮
+    // 1蝺 憍蝳�
     html+=`<div class="line-panel-sched">`;
-    const w1Label=w1ForceFold?`摺盒（${ovReason1}）`:!noWeddingOrders?`做週${dlvLabelW}單 ${wTotalBoxes}盒 · ${wHrs.toFixed(1)}h`:'摺盒';
-    html+=`<div class="line-hdr-sched line-hdr-w">1線 · 婚禮 (${l1Avail.length}人) · ${w1Label}</div>`;
+    const w1Label=w1ForceFold?`�箇嚗${ovReason1}嚗`:!noWeddingOrders?`��\�${dlvLabelW}�� ${wTotalBoxes}� 繚 ${wHrs.toFixed(1)}h`:'�箇';
+    html+=`<div class="line-hdr-sched line-hdr-w">1蝺 繚 憍蝳� (${l1Avail.length}鈭�) 繚 ${w1Label}</div>`;
     html+=`<div class="members-bar-sched">`;
     l1All.forEach(m=>{
       const leave=schedLeaveD[m.n][di],train=schedTrainD[m.n][di];
       html+=`<span class="member-chip-sched${leave?' on-leave':''}${train?' on-train':''}">${m.n}</span>`;
     });
     html+=`</div><div class="sta-zone" data-day="${di}" data-line="1" style="padding:0 16px 8px;display:flex;flex-wrap:wrap;gap:4px" ondragover="schedDragOver(event)" ondrop="schedDrop(event)">`;
-    l1Avail.forEach((m,mi)=>{html+=`<span class="station-chip-sched" draggable="true" data-idx="${mi}" ondragstart="schedDragStart(event)" ondragend="schedDragEnd(event)" ondblclick="schedEditStation(this)">${m.n}：${m.st}</span>`;});
+    l1Avail.forEach((m,mi)=>{html+=`<span class="station-chip-sched" draggable="true" data-idx="${mi}" ondragstart="schedDragStart(event)" ondragend="schedDragEnd(event)" ondblclick="schedEditStation(this)">${m.n}嚗${m.st}</span>`;});
     html+=`</div><div class="time-grid-sched">`;
     let wSlotCount=0;
     const ov1Slots=Math.ceil(ov1Hrs/0.5);
@@ -1589,42 +1595,42 @@ function schedGenerateSchedule(){
     const wFoldHrs=Math.max(0,SCHED_WORK_HOURS-ov1Hrs-wActualHrs);
     SCHED_SLOTS.forEach((slot,si)=>{
       if(SCHED_LUNCH.includes(si)){
-        html+=`<div class="time-row-sched"><div class="time-lbl-sched">${si===7?'11:30':'12:00'}</div><div class="time-blk-sched lunch" style="flex:1">午休</div></div>`;return;
+        html+=`<div class="time-row-sched"><div class="time-lbl-sched">${si===7?'11:30':'12:00'}</div><div class="time-blk-sched lunch" style="flex:1">�隡</div></div>`;return;
       }
       if(si===SCHED_CLEAN){
-        html+=`<div class="time-row-sched"><div class="time-lbl-sched">16:30</div><div class="time-blk-sched clean" style="flex:1">打掃</div></div>`;return;
+        html+=`<div class="time-row-sched"><div class="time-lbl-sched">16:30</div><div class="time-blk-sched clean" style="flex:1">��</div></div>`;return;
       }
-      // （contenteditable 僅加在一般時段）
+      // 嚗contenteditable �� �其�\�祆畾蛛�
       wSlotCount++;
       let content='',cls='order';
       if(w1ForceFold){cls='fold';if(si===0)content=ovReason1;}
       else if(wSlotCount<=ov1Slots&&ov1.length>0){cls=ov1[0].action==='fold'?'fold':'order';if(wSlotCount===1)content=ovReason1;}
-      else if(noWeddingOrders){cls='fold';if(wSlotCount===ov1Slots+1||si===0)content=`摺盒 ${wFoldHrs.toFixed(1)}h`;}
+      else if(noWeddingOrders){cls='fold';if(wSlotCount===ov1Slots+1||si===0)content=`�箇 ${wFoldHrs.toFixed(1)}h`;}
       else if(wSlotCount<=ov1Slots+wActualFinish){
         const orderSlot=wSlotCount-ov1Slots;
-        if(orderSlot===1) content=`做週${dlvLabelW}單 ${wTotalBoxes}盒 · ${wActualHrs.toFixed(1)}h → 完成到${wDoneDate||'?'}`;
+        if(orderSlot===1) content=`��\�${dlvLabelW}�� ${wTotalBoxes}� 繚 ${wActualHrs.toFixed(1)}h � 摰���${wDoneDate||'?'}`;
         else if(orderSlot===2&&seq[0]) content=seq[0];
         else if(orderSlot===3&&seq[1]) content=seq[1];
         else if(orderSlot===4&&seq[2]) content=seq[2];
-      } else {cls='fold';if(wSlotCount===ov1Slots+wActualFinish+1&&wFoldHrs>0)content=`摺盒 ${wFoldHrs.toFixed(1)}h`;}
+      } else {cls='fold';if(wSlotCount===ov1Slots+wActualFinish+1&&wFoldHrs>0)content=`�箇 ${wFoldHrs.toFixed(1)}h`;}
       html+=`<div class="time-row-sched"><div class="time-lbl-sched">${slot.split('~')[0]}</div><div class="time-blk-sched ${cls}" style="flex:1" contenteditable="true" oninput="this.classList.add('edited')">${content}</div></div>`;
     });
     html+=`</div></div>`;
 
-    // 分隔
+    // ��
     html+=`<div class="line-divider-sched"></div>`;
 
-    // 2線 彌月
+    // 2蝺 敶�
     html+=`<div class="line-panel-sched">`;
-    const babyLabel=babyHasOrders?`做單 ${babyProduced}盒 · ${bHrs.toFixed(1)}h`:'摺盒';
-    html+=`<div class="line-hdr-sched line-hdr-b">2線 · 彌月 (${l2Avail.length}人) · ${babyLabel}${foldMorning?' (凍庫滿→摺盒)':''}</div>`;
+    const babyLabel=babyHasOrders?`��� ${babyProduced}� 繚 ${bHrs.toFixed(1)}h`:'�箇';
+    html+=`<div class="line-hdr-sched line-hdr-b">2蝺 繚 敶� (${l2Avail.length}鈭�) 繚 ${babyLabel}${foldMorning?' (�摨急遛��箇)':''}</div>`;
     html+=`<div class="members-bar-sched">`;
     l2All.forEach(m=>{
       const leave=schedLeaveD[m.n][di],train=schedTrainD[m.n][di];
       html+=`<span class="member-chip-sched${leave?' on-leave':''}${train?' on-train':''}">${m.n}</span>`;
     });
     html+=`</div><div class="sta-zone" data-day="${di}" data-line="2" style="padding:0 16px 8px;display:flex;flex-wrap:wrap;gap:4px" ondragover="schedDragOver(event)" ondrop="schedDrop(event)">`;
-    l2Avail.forEach((m,mi)=>{html+=`<span class="station-chip-sched" draggable="true" data-idx="${mi}" ondragstart="schedDragStart(event)" ondragend="schedDragEnd(event)" ondblclick="schedEditStation(this)">${m.n}：${m.st}</span>`;});
+    l2Avail.forEach((m,mi)=>{html+=`<span class="station-chip-sched" draggable="true" data-idx="${mi}" ondragstart="schedDragStart(event)" ondragend="schedDragEnd(event)" ondblclick="schedEditStation(this)">${m.n}嚗${m.st}</span>`;});
     html+=`</div><div class="time-grid-sched">`;
     let bSlotCount=0;
     const ov2Slots=Math.ceil(ov2Hrs/0.5);
@@ -1634,22 +1640,22 @@ function schedGenerateSchedule(){
     const bFoldHrs=Math.max(0,SCHED_WORK_HOURS-ov2Hrs-bActualHrs);
     SCHED_SLOTS.forEach((slot,si)=>{
       if(SCHED_LUNCH.includes(si)){
-        html+=`<div class="time-row-sched"><div class="time-lbl-sched">${si===7?'11:30':'12:00'}</div><div class="time-blk-sched lunch" style="flex:1">午休</div></div>`;return;
+        html+=`<div class="time-row-sched"><div class="time-lbl-sched">${si===7?'11:30':'12:00'}</div><div class="time-blk-sched lunch" style="flex:1">�隡</div></div>`;return;
       }
       if(si===SCHED_CLEAN){
-        html+=`<div class="time-row-sched"><div class="time-lbl-sched">16:30</div><div class="time-blk-sched clean" style="flex:1">打掃</div></div>`;return;
+        html+=`<div class="time-row-sched"><div class="time-lbl-sched">16:30</div><div class="time-blk-sched clean" style="flex:1">��</div></div>`;return;
       }
-      // （contenteditable 僅加在一般時段）
+      // 嚗contenteditable �� �其�\�祆畾蛛�
       bSlotCount++;
       let content='',cls='order';
       if(b2ForceFold){cls='fold';if(si===0)content=ovReason2;}
       else if(bSlotCount<=ov2Slots&&ov2.length>0){cls=ov2[0].action==='fold'?'fold':'order';if(bSlotCount===1)content=ovReason2;}
-      else if(!babyHasOrders){cls='fold';if(bSlotCount===ov2Slots+1||si===0)content=`摺盒 ${bFoldHrs.toFixed(1)}h`;}
-      else if(foldMorning&&bSlotCount<=ov2Slots+Math.ceil(3.5/0.5)){cls='fold';if(bSlotCount===ov2Slots+1)content='摺盒（凍庫滿）';}
+      else if(!babyHasOrders){cls='fold';if(bSlotCount===ov2Slots+1||si===0)content=`�箇 ${bFoldHrs.toFixed(1)}h`;}
+      else if(foldMorning&&bSlotCount<=ov2Slots+Math.ceil(3.5/0.5)){cls='fold';if(bSlotCount===ov2Slots+1)content='�箇嚗�摨急遛嚗';}
       else if(bSlotCount<=ov2Slots+bActualFinish){
         const orderSlot=bSlotCount-ov2Slots;
-        if(orderSlot===1) content=`做單 ${babyProduced}盒 · ${bActualHrs.toFixed(1)}h → 完成到${bDoneDate||'?'}`;
-      } else {cls='fold';if(bSlotCount===ov2Slots+bActualFinish+1&&bFoldHrs>0)content=`摺盒 ${bFoldHrs.toFixed(1)}h`;}
+        if(orderSlot===1) content=`��� ${babyProduced}� 繚 ${bActualHrs.toFixed(1)}h � 摰���${bDoneDate||'?'}`;
+      } else {cls='fold';if(bSlotCount===ov2Slots+bActualFinish+1&&bFoldHrs>0)content=`�箇 ${bFoldHrs.toFixed(1)}h`;}
       html+=`<div class="time-row-sched"><div class="time-lbl-sched">${slot.split('~')[0]}</div><div class="time-blk-sched ${cls}" style="flex:1" contenteditable="true" oninput="this.classList.add('edited')">${content}</div></div>`;
     });
     html+=`</div></div>`;
@@ -1659,10 +1665,10 @@ function schedGenerateSchedule(){
   schedStep(4,document.querySelectorAll('.sched-step')[3]);
   schedSaveSchedule();
 
-  // 存計畫盒數到 localStorage，供週報和輸入資料使用
+  // 摮閮�怎�詨� localStorage嚗靘�\勗 勗頛詨亥��雿輻�
   const planKey='sched_plan_'+wkey(curW);
   try{
-    // 也存一份用日期 key
+    // 銋摮銝\隞賜冽交 key
     const dateKey='sched_plan_date_'+schedFd(schedWeekDates[0]);
     const planData={
       wedding:schedExcelData.w.t||0,
@@ -1675,7 +1681,7 @@ function schedGenerateSchedule(){
   }catch(e){}
 }
 
-// ---- 站點拖曳 / 編輯 ----
+// ---- 蝡暺��� / 蝺刻摩 ----
 let schedDraggedChip=null;
 function schedDragStart(e){
   schedDraggedChip=e.target;
@@ -1703,26 +1709,26 @@ function schedDrop(e){
   const zone=e.currentTarget;
   const target=e.target.closest('.station-chip-sched');
   if(target&&target!==schedDraggedChip){
-    // 交換兩個 chip 的內容
+    // 鈭斗�拙\ chip ��批捆
     const tmp=schedDraggedChip.textContent;
     schedDraggedChip.textContent=target.textContent;
     target.textContent=tmp;
   } else if(!target){
-    // 拖到空白處，移到最後
+    // ��啁征�質嚗蝘餃唳\敺
     zone.appendChild(schedDraggedChip);
   }
   document.querySelectorAll('.station-chip-sched.drag-over').forEach(el=>el.classList.remove('drag-over'));
 }
 function schedEditStation(chip){
   const cur=chip.textContent;
-  const input=prompt('修改站點（格式：姓名：站點）',cur);
+  const input=prompt('靽格寧�暺嚗� 澆�嚗憪�嚗蝡暺嚗',cur);
   if(input&&input.trim()) chip.textContent=input.trim();
 }
 
-// 複製排程
+// 銴鋆賣蝔
 function schedCopySchedule(){
   const el=document.getElementById('sched-output');
-  if(!el.innerHTML){alert('請先產生排程');return;}
+  if(!el.innerHTML){alert('隢��Ｙ�蝔');return;}
   let text='';
   el.querySelectorAll('.day-card-sched').forEach(card=>{
     const hdr=card.querySelector('.day-hdr-sched');
@@ -1738,10 +1744,10 @@ function schedCopySchedule(){
       });
     });
   });
-  navigator.clipboard.writeText(text).then(()=>alert('已複製到剪貼簿')).catch(()=>prompt('請手動複製：',text));
+  navigator.clipboard.writeText(text).then(()=>alert('撌脰�鋆賢啣芾票蝪�')).catch(()=>prompt('隢��銴鋆踝�',text));
 }
 
-// localStorage 歷史排程
+// localStorage 甇瑕脫蝔
 const SCHED_LS_KEY='cupetit_schedules';
 let schedCurrentHistKey='';
 
@@ -1779,19 +1785,19 @@ function schedSaveSchedule(){
 function schedLoadSchedule(key){
   const hist=schedGetHistory();
   const data=hist[key];
-  if(!data){alert('找不到排程');return;}
+  if(!data){alert('�曆��唳蝔');return;}
   schedCurrentHistKey=key;
   document.getElementById('sched-output').innerHTML=data.html;
   schedStep(4,document.querySelectorAll('.sched-step')[3]);
 }
 
 function schedDeleteSchedule(key){
-  if(!confirm(`確定刪除 ${key} 的排程？`)) return;
+  if(!confirm(`蝣箏��芷� ${key} ��蝔嚗`)) return;
   const hist=schedGetHistory();
   delete hist[key];
   localStorage.setItem(SCHED_LS_KEY,JSON.stringify(hist));
   schedRefreshHistoryList();
-  document.getElementById('sched-output').innerHTML='<div style="text-align:center;color:#888;padding:20px">排程已刪除</div>';
+  document.getElementById('sched-output').innerHTML='<div style="text-align:center;color:#888;padding:20px">�蝔撌脣芷�</div>';
 }
 
 function schedRefreshHistoryList(){
@@ -1806,7 +1812,7 @@ function schedRefreshHistoryList(){
     const d=hist[k];
     return `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #f0f0ee;font-size:12px">
       <a href="#" onclick="schedLoadSchedule('${k}');return false" style="color:#378ADD;text-decoration:none;font-weight:500">${d.weekLabel||k}</a>
-      <button class="sbtn-sm" style="font-size:10px;padding:3px 8px;background:#fff;color:#A32D2D;border:1px solid #ddd" onclick="schedDeleteSchedule('${k}')">刪除</button>
+      <button class="sbtn-sm" style="font-size:10px;padding:3px 8px;background:#fff;color:#A32D2D;border:1px solid #ddd" onclick="schedDeleteSchedule('${k}')">�芷�</button>
     </div>`;
   }).join('');
 }
