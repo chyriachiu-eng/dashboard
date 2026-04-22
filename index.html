@@ -257,7 +257,7 @@ input:focus,textarea:focus{outline:none;border-color:#888;background:#fff}
       <div class="card">
         <div class="ct">工時流向分析</div>
         <div class="std-note">標準：婚禮 <strong>25 盒／人時</strong>　彌月 <strong>36 盒／人時</strong>　節慶 不納入<br>
-        稼動率 ＝ 實際投入（生產+摺盒+訓練）÷ 總人時　｜　生產效率 ＝ 理論人時 ÷ 實際投入　｜　產能利用率 ＝ 實際產出 ÷ 設計最大產能（15,600 盒/週）<br>
+        稼動率 ＝ 實際投入（做單+摺盒+訓練）÷ 總人時　｜　生產效率 ＝ 計畫做單時間 ÷ 實際做單時間　｜　產能利用率 ＝ 實際產出 ÷ 設計最大產能（15,600 盒/週）<br>
         未解釋工時 ＝ 總人時 − 實際投入</div>
         <div id="hr-flow"></div>
       </div>
@@ -472,10 +472,10 @@ input:focus,textarea:focus{outline:none;border-color:#888;background:#fff}
     <!-- 跨週比較 -->
     <div id="tab-compare" class="hide">
       <div class="card"><div class="ct">各週總組裝量（近 8 週）</div><div id="cmp-prod"></div></div>
-      <div class="card"><div class="ct">各週生產效率 — 理論人時 ÷ 實際投入人時（近 8 週）</div><div id="cmp-eff"></div></div>
+      <div class="card"><div class="ct">各週生產效率 — 計畫做單時間 ÷ 實際做單時間（近 8 週）</div><div id="cmp-eff"></div></div>
       <div class="card">
-        <div class="ct">各週工時差異 — 理論人時 − 實際投入人時（近 8 週）</div>
-        <div style="font-size:11px;color:#888;margin-bottom:10px">正值 = 工時有餘裕　負值 = 超出理論標準</div>
+        <div class="ct">各週工時差異 — 計畫做單時間 − 實際做單時間（近 8 週）</div>
+        <div style="font-size:11px;color:#888;margin-bottom:10px">正值 = 計畫有餘裕　負值 = 實際做單超出計畫</div>
         <div id="cmp-diff"></div>
       </div>
       <div class="card"><div class="ct">各週教育訓練時數（近 8 週）</div><div id="cmp-train"></div></div>
@@ -759,21 +759,24 @@ function render(){
   const totalBox=d.weddingCount+d.babyCount+d.festivalCount;
   const theory=calcTheory(d);
 
-  // 實際投入人時 = 生產 + 摺盒 + 訓練
-  const usedHrs = round2((d.productionHours||0) + (d.boxFoldingCount||0) + (d.trainingHours||0));
+  // 實際投入人時 = 實際做單 + 摺盒 + 訓練（做單=productionHours 只是改名）
+  const actualOrderHrs = d.productionHours || 0;
+  const usedHrs = round2(actualOrderHrs + (d.boxFoldingCount||0) + (d.trainingHours||0));
   const unexplained = round2(Math.max(0, d.totalHours - usedHrs));
 
   // 1. 稼動率 = 實際投入人時 ÷ 總人時（人/機是否被有效動用）
   const util = d.totalHours > 0 ? Math.round(usedHrs / d.totalHours * 100) : 0;
-  // 2. 生產效率 = 理論人時 ÷ 實際投入人時（產出是否符合標準速度）
-  const effPct = usedHrs > 0 ? Math.round(theory / usedHrs * 100) : 0;
+  // 2. 生產效率 = 計畫做單時間 ÷ 實際做單時間（排程計畫 vs 實際花費）
+  const plannedOrderHrs = d.plannedTotalHours || 0;
+  const effPct = (plannedOrderHrs > 0 && actualOrderHrs > 0) ? Math.round(plannedOrderHrs / actualOrderHrs * 100) : 0;
   // 3. 產能利用率 = 實際產出 ÷ 設計最大產能（全場產能使用）
   const designCap = WEEKLY_CAPACITY.wedding + WEEKLY_CAPACITY.baby;
   const capUtil = designCap > 0 ? Math.round((d.weddingCount + d.babyCount) / designCap * 100) : 0;
   const wedCapPct = Math.round(d.weddingCount / WEEKLY_CAPACITY.wedding * 100);
   const babyCapPct = Math.round(d.babyCount / WEEKLY_CAPACITY.baby * 100);
 
-  const diff = round2(theory - usedHrs);
+  // 工時差異 = 計畫做單 − 實際做單
+  const diff = round2(plannedOrderHrs - actualOrderHrs);
 
   // KPI → 產能總覽（膠囊風格，含計畫對比 + admin 可行內編輯）
   const hasPlan = !!(d.plannedWedding || d.plannedBaby || d.plannedFestival);
@@ -815,7 +818,7 @@ function render(){
 
   // 工時分析（色系對齊生管系統）
   const hrItems = [
-    {label:'實際生產工時', val:d.productionHours,  color:'#16a34a'},
+    {label:'實際做單時間', val:d.productionHours,  color:'#16a34a'},
     {label:'摺盒工時',    val:d.boxFoldingCount,  color:'#7c3aed'},
     {label:'訓練時數',    val:d.trainingHours,    color:'#d97706'},
     {label:'未解釋工時',  val:unexplained,        color:'#dc2626'},
@@ -831,11 +834,13 @@ function render(){
   } else {
     lines.push(`稼動率 <strong style="color:#dc2626">${util}%</strong>（${usedHrs} / ${d.totalHours} hr）未達 80%，有 ${unexplained} hr 未解釋，代表人力閒置或未記錄。`);
   }
-  // 生產效率
-  if(effPct >= 80){
-    lines.push(`生產效率 <strong>${effPct}%</strong>（理論 ${theory} / 實際投入 ${usedHrs} hr）— 產出符合標準速度。`);
-  } else if(effPct > 0){
-    lines.push(`生產效率 <strong style="color:#dc2626">${effPct}%</strong>（理論 ${theory} / 實際投入 ${usedHrs} hr，多用 ${Math.abs(diff)} hr）— 產出慢於標準速度，可能原因：人員熟練度不足、設備/材料等待、站位配置、盒款複雜度。`);
+  // 生產效率：計畫做單時間 / 實際做單時間
+  if(plannedOrderHrs === 0){
+    lines.push(`生產效率 <span style="color:#9CA3AF">尚未計算</span>（等待排程系統推送「計畫做單時間」）。`);
+  } else if(effPct >= 80){
+    lines.push(`生產效率 <strong>${effPct}%</strong>（計畫 ${plannedOrderHrs} / 實際做單 ${actualOrderHrs} hr）— 做單速度符合計畫。`);
+  } else {
+    lines.push(`生產效率 <strong style="color:#dc2626">${effPct}%</strong>（計畫 ${plannedOrderHrs} / 實際做單 ${actualOrderHrs} hr，多花 ${Math.abs(diff)} hr）— 做單速度慢於計畫，可能原因：人員熟練度不足、設備/材料等待、站位配置、盒款複雜度。`);
   }
   // 產能利用率
   const designCapT = WEEKLY_CAPACITY.wedding + WEEKLY_CAPACITY.baby;
@@ -850,7 +855,7 @@ function render(){
   // 顏色規則：達標(≥80)=黃色主色、未達=紅、警示(50-79)=琥珀
   const rateDef = [
     {key:'util',  title:'稼動率',    pct:util,    sub:`${usedHrs}/${d.totalHours} hr`, hint:'實際投入 ÷ 總人時'},
-    {key:'eff',   title:'生產效率',  pct:effPct,  sub:`理論 ${theory}/投入 ${usedHrs} hr`, hint:'理論人時 ÷ 實際投入'},
+    {key:'eff',   title:'生產效率',  pct:effPct,  sub:plannedOrderHrs>0?`計畫 ${plannedOrderHrs}/實際做單 ${actualOrderHrs} hr`:'待排程推送計畫', hint:'計畫做單時間 ÷ 實際做單時間'},
     {key:'cap',   title:'產能利用率',pct:capUtil, sub:`${(d.weddingCount+d.babyCount).toLocaleString()}/${(WEEKLY_CAPACITY.wedding+WEEKLY_CAPACITY.baby).toLocaleString()} 盒`, hint:'實際產出 ÷ 設計最大產能'},
   ];
   function miniGauge(r){
@@ -887,7 +892,7 @@ function render(){
   };
   const hourInputsHtml = `<div class="hour-inputs">
     ${hourField('totalHours','總人時',d.totalHours)}
-    ${hourField('productionHours','生產工時',d.productionHours)}
+    ${hourField('productionHours','實際做單時間',d.productionHours)}
     ${hourField('boxFoldingCount','摺盒工時',d.boxFoldingCount)}
     ${hourField('trainingHours','訓練時數',d.trainingHours)}
   </div>`;
@@ -917,7 +922,7 @@ function render(){
       <div style="font-size:12px;font-weight:500;color:#1a1a1a;margin-bottom:12px">工時去向</div>
       ${hrBarsHtml}
       <div style="font-size:11px;color:#6B7280;font-family:var(--font-mono);line-height:1.7;margin-top:8px">
-        稼動率 ＝ 實際投入 ÷ 總人時 <span style="color:#111827;font-weight:600">${util}%</span>　｜　生產效率 ＝ 理論 ÷ 實際投入 <span style="color:#111827;font-weight:600">${effPct}%</span>　｜　產能利用率 <span style="color:#111827;font-weight:600">${capUtil}%</span>
+        稼動率 ＝ 實際投入 ÷ 總人時 <span style="color:#111827;font-weight:600">${util}%</span>　｜　生產效率 ＝ 計畫做單 ÷ 實際做單 <span style="color:#111827;font-weight:600">${plannedOrderHrs>0?effPct+'%':'—'}</span>　｜　產能利用率 <span style="color:#111827;font-weight:600">${capUtil}%</span>
       </div>
     </div>
     <div style="background:${kaidoBg};border:1px solid ${kaidoBorder};border-radius:10px;padding:12px 16px;font-size:12px;line-height:1.9;color:${kaidoColor};margin-top:14px">${kaidoMsg}</div>`;
@@ -955,7 +960,7 @@ function renderCompare(){
   const ws=recentWeeks(8);
   const maxProd=Math.max(...ws.map(w=>w.d.weddingCount+w.d.babyCount+w.d.festivalCount),1);
   const maxTrain=Math.max(...ws.map(w=>w.d.trainingHours),1);
-  const maxDiff=Math.max(...ws.map(w=>Math.abs(round2(calcTheory(w.d)-wUsed(w.d)))),1);
+  const maxDiff=Math.max(...ws.map(w=>Math.abs(round2((w.d.plannedTotalHours||0)-(w.d.productionHours||0)))),1);
   document.getElementById('cmp-prod').innerHTML=ws.map(w=>{
     const tot=w.d.weddingCount+w.d.babyCount+w.d.festivalCount;
     const plan=(w.d.plannedWedding||0)+(w.d.plannedBaby||0)+(w.d.plannedFestival||0);
@@ -965,13 +970,19 @@ function renderCompare(){
     return `<div class="cbar"><div class="cbl" style="${isc?'font-weight:700':''}">${w.l}</div><div class="cbb" style="position:relative"><div class="cbf" style="width:${Math.max(p,0)}%;background:${isc?'#16a34a':'#9FE1CB'};color:${isc?'#fff':'#14532d'}">${tot>0?tot.toLocaleString()+' 盒':''}</div>${plan>0?`<div style="position:absolute;top:0;left:${Math.min(planP,100)}%;width:2px;height:100%;background:#1a1a1a;opacity:0.5" title="計畫 ${plan.toLocaleString()} 盒"></div>`:''}${plan>0&&tot>0?`<span style="position:absolute;right:4px;top:2px;font-size:9px;color:#888">${rate}%</span>`:''}</div></div>`;
   }).join('');
   document.getElementById('cmp-eff').innerHTML=ws.map(w=>{
-    const u=wUsed(w.d);
-    const e=u>0?Math.round(calcTheory(w.d)/u*100):0,isc=w.o===curW;
-    return `<div class="cbar"><div class="cbl" style="${isc?'font-weight:700':''}">${w.l}</div><div class="cbb"><div class="cbf" style="width:${Math.min(e,100)}%;background:${isc?'#2563eb':'#B5D4F4'};color:${isc?'#fff':'#0C447C'}">${e>0?e+'%':''}</div></div></div>`;
+    const plan=w.d.plannedTotalHours||0;
+    const act=w.d.productionHours||0;
+    const e=(plan>0 && act>0)?Math.round(plan/act*100):0;
+    const isc=w.o===curW;
+    return `<div class="cbar"><div class="cbl" style="${isc?'font-weight:700':''}">${w.l}</div><div class="cbb"><div class="cbf" style="width:${Math.min(e,100)}%;background:${isc?'#2563eb':'#B5D4F4'};color:${isc?'#fff':'#0C447C'}">${e>0?e+'%':'—'}</div></div></div>`;
   }).join('');
   document.getElementById('cmp-diff').innerHTML=ws.map(w=>{
-    const diff=round2(calcTheory(w.d)-wUsed(w.d)),p=Math.round(Math.abs(diff)/maxDiff*100),isc=w.o===curW;
-    return `<div class="cbar"><div class="cbl" style="${isc?'font-weight:700':''}">${w.l}</div><div class="cbb"><div class="cbf" style="width:${Math.max(p,0)}%;background:${diff>=0?'#16a34a':'#dc2626'};color:#fff">${diff!==0?(diff>0?'+':'')+diff+' hr':'0'}</div></div></div>`;
+    const plan=w.d.plannedTotalHours||0;
+    const act=w.d.productionHours||0;
+    const diff=round2(plan-act);
+    const p=Math.round(Math.abs(diff)/maxDiff*100);
+    const isc=w.o===curW;
+    return `<div class="cbar"><div class="cbl" style="${isc?'font-weight:700':''}">${w.l}</div><div class="cbb"><div class="cbf" style="width:${Math.max(p,0)}%;background:${diff>=0?'#16a34a':'#dc2626'};color:#fff">${(plan>0&&act>0)?(diff!==0?(diff>0?'+':'')+diff+' hr':'0'):'—'}</div></div></div>`;
   }).join('');
   document.getElementById('cmp-train').innerHTML=ws.map(w=>{
     const p=maxTrain>0?Math.round(w.d.trainingHours/maxTrain*100):0,isc=w.o===curW;
@@ -983,17 +994,19 @@ function renderReport(){
   const d=getW(curW),totalBox=d.weddingCount+d.babyCount+d.festivalCount;
   const theory=calcTheory(d);
   const usedHrs=wUsed(d);
+  const actualOrderHrs=d.productionHours||0;
+  const plannedOrderHrs=d.plannedTotalHours||0;
   const util=d.totalHours>0?Math.round(usedHrs/d.totalHours*100):0;
-  const effPct=usedHrs>0?Math.round(theory/usedHrs*100):0;
+  const effPct=(plannedOrderHrs>0 && actualOrderHrs>0)?Math.round(plannedOrderHrs/actualOrderHrs*100):0;
   const designCap=WEEKLY_CAPACITY.wedding+WEEKLY_CAPACITY.baby;
   const capUtil=designCap>0?Math.round((d.weddingCount+d.babyCount)/designCap*100):0;
-  const diff=round2(theory-usedHrs);
+  const diff=round2(plannedOrderHrs-actualOrderHrs);
   const hasPlan = !!(d.plannedWedding || d.plannedBaby || d.plannedFestival);
   const plannedTotal = (d.plannedWedding||0)+(d.plannedBaby||0)+(d.plannedFestival||0);
   const warns=[];
-  if(diff<-2) warns.push(`實際投入超出理論 ${Math.abs(diff)} hr，建議確認人員效率或流程問題`);
+  if(plannedOrderHrs>0 && diff<-2) warns.push(`實際做單時間超出計畫 ${Math.abs(diff)} hr，建議確認人員效率或流程問題`);
   if(util<70) warns.push(`稼動率 ${util}% 偏低，代表人力閒置或工時未完整記錄`);
-  if(effPct>0 && effPct<80) warns.push(`生產效率 ${effPct}% 偏低（產出慢於標準速度）`);
+  if(effPct>0 && effPct<80) warns.push(`生產效率 ${effPct}% 偏低（做單速度慢於計畫）`);
   if(d.cookieRate*100>1) warns.push(`餅乾不良率 ${pct(d.cookieRate)}，建議追查原因`);
   if(d.boxScrapRate*100>1) warns.push(`禮盒報廢率 ${pct(d.boxScrapRate)}，建議檢討包裝流程`);
   if(d.badCost>5000) warns.push(`本週不良金額 $${d.badCost.toLocaleString()}，建議列入品質會議討論`);
@@ -1019,10 +1032,10 @@ function renderReport(){
       ${planHtml}
       <div style="font-weight:600;color:#1a1a1a;margin-top:10px;margin-bottom:2px">三率</div>
       稼動率：<strong>${util}%</strong>（實際投入 ${usedHrs} / 總人時 ${d.totalHours} hr）<br>
-      生產效率：<strong>${effPct}%</strong>（理論 ${theory} / 實際投入 ${usedHrs} hr，差 ${diff>=0?'+':''}${diff} hr）<br>
+      生產效率：<strong>${plannedOrderHrs>0?effPct+'%':'—'}</strong>（計畫做單 ${plannedOrderHrs} / 實際做單 ${actualOrderHrs} hr${plannedOrderHrs>0?'，差 '+(diff>=0?'+':'')+diff+' hr':'（待排程推送計畫）'}）<br>
       產能利用率：<strong>${capUtil}%</strong>（${(d.weddingCount+d.babyCount).toLocaleString()} / ${designCap.toLocaleString()} 盒，設計上限）<br>
       <div style="font-weight:600;color:#1a1a1a;margin-top:10px;margin-bottom:2px">工時分析</div>
-      總人時：${d.totalHours} hr　生產：${d.productionHours} hr　摺盒：${d.boxFoldingCount} hr　訓練：${d.trainingHours} hr<br>
+      總人時：${d.totalHours} hr　實際做單：${d.productionHours} hr　摺盒：${d.boxFoldingCount} hr　訓練：${d.trainingHours} hr<br>
       <div style="font-weight:600;color:#1a1a1a;margin-top:10px;margin-bottom:2px">品質</div>
       不良類型：${d.badTypes||'—'}　報廢大宗品：${d.scrapItem||'—'}（${d.scrapQty} 個，${d.scrapRate}%）<br>
       不良總數：${d.badCount} 個　金額：$${(d.badCost||0).toLocaleString()}　餅乾不良率：${pct(d.cookieRate)}　禮盒報廢率：${pct(d.boxScrapRate)}<br>
@@ -1036,13 +1049,15 @@ function exportReport(){
   const d=getW(curW),totalBox=d.weddingCount+d.babyCount+d.festivalCount;
   const theory=calcTheory(d);
   const usedHrs=wUsed(d);
+  const actualOrderHrs=d.productionHours||0;
+  const plannedOrderHrs=d.plannedTotalHours||0;
   const util=d.totalHours>0?Math.round(usedHrs/d.totalHours*100):0;
-  const effPct=usedHrs>0?Math.round(theory/usedHrs*100):0;
+  const effPct=(plannedOrderHrs>0 && actualOrderHrs>0)?Math.round(plannedOrderHrs/actualOrderHrs*100):0;
   const designCap=WEEKLY_CAPACITY.wedding+WEEKLY_CAPACITY.baby;
   const capUtil=designCap>0?Math.round((d.weddingCount+d.babyCount)/designCap*100):0;
   const wedCapPct=Math.round(d.weddingCount/WEEKLY_CAPACITY.wedding*100);
   const babyCapPct=Math.round(d.babyCount/WEEKLY_CAPACITY.baby*100);
-  const diff=round2(theory-usedHrs);
+  const diff=round2(plannedOrderHrs-actualOrderHrs);
   // 從 API 讀取計畫盒數
   const hasPlanE = !!(d.plannedWedding || d.plannedBaby || d.plannedFestival);
   let planSection='';
@@ -1054,7 +1069,10 @@ function exportReport(){
     planSection=`\n\n■ 計畫達成\n  計畫：${planTotal} 盒（婚禮 ${d.plannedWedding}、彌月 ${d.plannedBaby}、節慶 ${d.plannedFestival}）\n  達成率：婚禮 ${rateW}%　彌月 ${rateB}%　總計 ${rateT}%`;
     if(d.plannedTotalHours) planSection+=`\n  計畫人時：${d.plannedTotalHours} hr（生產 ${d.plannedProductionHours||0} + 摺盒 ${d.plannedFoldHours||0}）`;
   }
-  const text=`【組裝部週報】${wlabel(curW)}\n\n■ 產能\n  總組裝：${totalBox} 盒（婚禮 ${d.weddingCount}、彌月 ${d.babyCount}、節慶 ${d.festivalCount}）${planSection}\n\n■ 三率\n  稼動率：${util}%（實際投入 ${usedHrs} / 總人時 ${d.totalHours} hr）\n  生產效率：${effPct}%（理論 ${theory} / 實際投入 ${usedHrs} hr，差 ${diff>=0?'+':''}${diff} hr）\n  產能利用率：${capUtil}%（婚禮 ${wedCapPct}% · 彌月 ${babyCapPct}%　設計 ${designCap} 盒/週）\n\n■ 工時分析\n  總人時：${d.totalHours} hr　生產：${d.productionHours} hr　摺盒：${d.boxFoldingCount} hr　訓練：${d.trainingHours} hr\n\n■ 品質\n  不良：${d.badTypes||'—'}　報廢：${d.scrapItem||'—'}（${d.scrapQty} 個）\n  不良數：${d.badCount}　金額：$${d.badCost}　餅乾不良率：${pct(d.cookieRate)}　禮盒報廢率：${pct(d.boxScrapRate)}\n\n■ 教育訓練\n  ${d.trainingHours} hr　${d.trainingNote||'—'}`;
+  const effLine = plannedOrderHrs>0
+    ? `生產效率：${effPct}%（計畫做單 ${plannedOrderHrs} / 實際做單 ${actualOrderHrs} hr，差 ${diff>=0?'+':''}${diff} hr）`
+    : `生產效率：—（待排程推送計畫做單時間）`;
+  const text=`【組裝部週報】${wlabel(curW)}\n\n■ 產能\n  總組裝：${totalBox} 盒（婚禮 ${d.weddingCount}、彌月 ${d.babyCount}、節慶 ${d.festivalCount}）${planSection}\n\n■ 三率\n  稼動率：${util}%（實際投入 ${usedHrs} / 總人時 ${d.totalHours} hr）\n  ${effLine}\n  產能利用率：${capUtil}%（婚禮 ${wedCapPct}% · 彌月 ${babyCapPct}%　設計 ${designCap} 盒/週）\n\n■ 工時分析\n  總人時：${d.totalHours} hr　實際做單：${d.productionHours} hr　摺盒：${d.boxFoldingCount} hr　訓練：${d.trainingHours} hr\n\n■ 品質\n  不良：${d.badTypes||'—'}　報廢：${d.scrapItem||'—'}（${d.scrapQty} 個）\n  不良數：${d.badCount}　金額：$${d.badCost}　餅乾不良率：${pct(d.cookieRate)}　禮盒報廢率：${pct(d.boxScrapRate)}\n\n■ 教育訓練\n  ${d.trainingHours} hr　${d.trainingNote||'—'}`;
   navigator.clipboard.writeText(text).then(()=>alert('已複製！可貼到 Line 或 Email。')).catch(()=>prompt('請手動複製：',text));
 }
 
