@@ -50,7 +50,8 @@
 .hour-inputs input{background:transparent;border:none;border-bottom:1.5px dashed rgba(0,0,0,.2);font-size:20px;font-weight:300;color:#111827;font-variant-numeric:tabular-nums;letter-spacing:-.02em;padding:2px 0;font-family:inherit;outline:none;width:100%}
 .hour-inputs input:focus{border-bottom-color:#111827;border-bottom-style:solid}
 .hour-inputs input::-webkit-outer-spin-button,.hour-inputs input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
-@media(max-width:640px){.stat-pills,.rates-gauges{grid-template-columns:1fr}.hour-inputs{grid-template-columns:1fr 1fr}}
+@media(max-width:900px){.hour-inputs[style*="repeat(5"]{grid-template-columns:repeat(3,1fr)!important}}
+@media(max-width:640px){.stat-pills,.rates-gauges{grid-template-columns:1fr}.hour-inputs,.hour-inputs[style*="repeat(5"]{grid-template-columns:repeat(2,1fr)!important}}
 body{font-family:var(--font-sans);background:var(--bg);color:var(--text);font-size:14px}
 /* 三率卡片（與生管系統 asm-review-calc 對齊） */
 .kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:16px 20px;background:#F9FAFB;border-radius:14px;margin-top:10px}
@@ -767,7 +768,8 @@ function render(){
   // 1. 稼動率 = 實際投入人時 ÷ 總人時（人/機是否被有效動用）
   const util = d.totalHours > 0 ? Math.round(usedHrs / d.totalHours * 100) : 0;
   // 2. 生產效率 = 計畫做單時間 ÷ 實際做單時間（排程計畫 vs 實際花費）
-  const plannedOrderHrs = d.plannedTotalHours || 0;
+  // 計畫做單時間 = 排程中 type !== 'fold' 的生產工時（對應生管系統的 plannedProductionHours）
+  const plannedOrderHrs = d.plannedProductionHours || 0;
   const effPct = (plannedOrderHrs > 0 && actualOrderHrs > 0) ? Math.round(plannedOrderHrs / actualOrderHrs * 100) : 0;
   // 3. 產能利用率 = 實際產出 ÷ 設計最大產能（全場產能使用）
   const designCap = WEEKLY_CAPACITY.wedding + WEEKLY_CAPACITY.baby;
@@ -883,18 +885,20 @@ function render(){
     </div>`;
   }
 
-  // === 工時輸入列（admin 可編輯：總人時/生產/摺盒/訓練）===
-  const hourField = (field, label, val) => {
+  // === 工時輸入列（admin 可編輯：總人時/實際做單/摺盒/訓練/計畫做單）===
+  const hourField = (field, label, val, accent) => {
+    const style = accent ? ' style="background:#FFF9E6;padding:4px 8px;border-radius:8px;margin:-4px -8px"' : '';
     if(isAdmin){
-      return `<label><span class="hi-label">${label}</span><input type="number" step="0.5" min="0" value="${val||0}" onchange="quickSave('${field}',this.value)"></label>`;
+      return `<label${style}><span class="hi-label">${label}</span><input type="number" step="0.5" min="0" value="${val||0}" onchange="quickSave('${field}',this.value)"></label>`;
     }
-    return `<label><span class="hi-label">${label}</span><span class="hi-val">${val||0} hr</span></label>`;
+    return `<label${style}><span class="hi-label">${label}</span><span class="hi-val">${val||0} hr</span></label>`;
   };
-  const hourInputsHtml = `<div class="hour-inputs">
+  const hourInputsHtml = `<div class="hour-inputs" style="grid-template-columns:repeat(5,1fr)">
     ${hourField('totalHours','總人時',d.totalHours)}
     ${hourField('productionHours','實際做單時間',d.productionHours)}
     ${hourField('boxFoldingCount','摺盒工時',d.boxFoldingCount)}
     ${hourField('trainingHours','訓練時數',d.trainingHours)}
+    ${hourField('plannedProductionHours','計畫做單時間',d.plannedProductionHours,true)}
   </div>`;
 
   // === 工時去向（右邊長條） ===
@@ -960,7 +964,7 @@ function renderCompare(){
   const ws=recentWeeks(8);
   const maxProd=Math.max(...ws.map(w=>w.d.weddingCount+w.d.babyCount+w.d.festivalCount),1);
   const maxTrain=Math.max(...ws.map(w=>w.d.trainingHours),1);
-  const maxDiff=Math.max(...ws.map(w=>Math.abs(round2((w.d.plannedTotalHours||0)-(w.d.productionHours||0)))),1);
+  const maxDiff=Math.max(...ws.map(w=>Math.abs(round2((w.d.plannedProductionHours||0)-(w.d.productionHours||0)))),1);
   document.getElementById('cmp-prod').innerHTML=ws.map(w=>{
     const tot=w.d.weddingCount+w.d.babyCount+w.d.festivalCount;
     const plan=(w.d.plannedWedding||0)+(w.d.plannedBaby||0)+(w.d.plannedFestival||0);
@@ -970,14 +974,14 @@ function renderCompare(){
     return `<div class="cbar"><div class="cbl" style="${isc?'font-weight:700':''}">${w.l}</div><div class="cbb" style="position:relative"><div class="cbf" style="width:${Math.max(p,0)}%;background:${isc?'#16a34a':'#9FE1CB'};color:${isc?'#fff':'#14532d'}">${tot>0?tot.toLocaleString()+' 盒':''}</div>${plan>0?`<div style="position:absolute;top:0;left:${Math.min(planP,100)}%;width:2px;height:100%;background:#1a1a1a;opacity:0.5" title="計畫 ${plan.toLocaleString()} 盒"></div>`:''}${plan>0&&tot>0?`<span style="position:absolute;right:4px;top:2px;font-size:9px;color:#888">${rate}%</span>`:''}</div></div>`;
   }).join('');
   document.getElementById('cmp-eff').innerHTML=ws.map(w=>{
-    const plan=w.d.plannedTotalHours||0;
+    const plan=w.d.plannedProductionHours||0;
     const act=w.d.productionHours||0;
     const e=(plan>0 && act>0)?Math.round(plan/act*100):0;
     const isc=w.o===curW;
     return `<div class="cbar"><div class="cbl" style="${isc?'font-weight:700':''}">${w.l}</div><div class="cbb"><div class="cbf" style="width:${Math.min(e,100)}%;background:${isc?'#2563eb':'#B5D4F4'};color:${isc?'#fff':'#0C447C'}">${e>0?e+'%':'—'}</div></div></div>`;
   }).join('');
   document.getElementById('cmp-diff').innerHTML=ws.map(w=>{
-    const plan=w.d.plannedTotalHours||0;
+    const plan=w.d.plannedProductionHours||0;
     const act=w.d.productionHours||0;
     const diff=round2(plan-act);
     const p=Math.round(Math.abs(diff)/maxDiff*100);
@@ -995,7 +999,7 @@ function renderReport(){
   const theory=calcTheory(d);
   const usedHrs=wUsed(d);
   const actualOrderHrs=d.productionHours||0;
-  const plannedOrderHrs=d.plannedTotalHours||0;
+  const plannedOrderHrs=d.plannedProductionHours||0;
   const util=d.totalHours>0?Math.round(usedHrs/d.totalHours*100):0;
   const effPct=(plannedOrderHrs>0 && actualOrderHrs>0)?Math.round(plannedOrderHrs/actualOrderHrs*100):0;
   const designCap=WEEKLY_CAPACITY.wedding+WEEKLY_CAPACITY.baby;
@@ -1050,7 +1054,7 @@ function exportReport(){
   const theory=calcTheory(d);
   const usedHrs=wUsed(d);
   const actualOrderHrs=d.productionHours||0;
-  const plannedOrderHrs=d.plannedTotalHours||0;
+  const plannedOrderHrs=d.plannedProductionHours||0;
   const util=d.totalHours>0?Math.round(usedHrs/d.totalHours*100):0;
   const effPct=(plannedOrderHrs>0 && actualOrderHrs>0)?Math.round(plannedOrderHrs/actualOrderHrs*100):0;
   const designCap=WEEKLY_CAPACITY.wedding+WEEKLY_CAPACITY.baby;
