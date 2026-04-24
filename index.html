@@ -26,6 +26,8 @@
 .pill-chip-dark{background:#fff;color:#1a1a1a;border:1px solid #E5E7EB}
 .pill-grey .pill-chip{background:#1a1a1a;color:#fff;border:none}
 .pill-value{font-size:34px;font-weight:300;color:#111827;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums;margin-top:10px}
+.pill-value.pill-value-plan{color:#6B7280}
+.pill-plan-tag{display:inline-block;margin-left:10px;padding:2px 10px;background:rgba(0,0,0,.08);color:#374151;font-size:11px;font-weight:600;border-radius:100px;vertical-align:6px;letter-spacing:.02em}
 .pill-unit{font-size:13px;color:#1a1a1a;font-weight:400;margin-left:4px}
 .pill-sub{font-size:11px;color:#4B5563;margin-top:8px;font-family:var(--font-mono);line-height:1.5}
 .pill-meter{height:4px;background:rgba(0,0,0,.1);border-radius:2px;margin-top:10px;overflow:hidden}
@@ -746,16 +748,9 @@ function fillInputs(){
 // ---- 主要渲染 ----
 function render(){
   document.getElementById('wklabel').textContent=wlabel(curW);
-  // 舊版相對週索引偵測 → 顯示遷移 banner
+  // 舊版相對週索引 banner 已停用（依使用者要求移除，2026-04-24）
   const legacyBanner = document.getElementById('legacy-banner');
-  if(legacyBanner){
-    if(_legacyKeys().length > 0){
-      legacyBanner.style.display = 'block';
-      legacyBanner.innerHTML = `⚠ 偵測到 <strong>${_legacyKeys().length}</strong> 筆舊版相對週索引（wp0/wm1...），顯示會隨今天漂移造成資料跑錯週。<button onclick="migrateLegacyWeekKeys()" style="margin-left:12px;padding:6px 14px;background:#111827;color:#FFE25E;border:none;border-radius:6px;font-size:12px;cursor:pointer;font-weight:600">立即遷移為絕對日期</button>`;
-    } else {
-      legacyBanner.style.display = 'none';
-    }
-  }
+  if(legacyBanner) legacyBanner.style.display = 'none';
   const d=getW(curW);
   const totalBox=d.weddingCount+d.babyCount+d.festivalCount;
   const theory=calcTheory(d);
@@ -791,28 +786,38 @@ function render(){
   ];
 
   const pillsHtml = pillData.map(p=>{
-    const planRate = p.plan > 0 ? Math.round(p.val/p.plan*100) : 0;
-    const capPct = p.cap ? Math.min(100, Math.round(p.val/p.cap*100)) : 0;
-    const meterPct = p.cap ? capPct : (p.plan > 0 ? Math.min(100, planRate) : 0);
-    const subText = p.cap
-      ? `產能 ${p.cap ? Math.round(p.val/p.cap*100) : 0}%（${p.val.toLocaleString()}/${p.cap.toLocaleString()}）${p.plan>0?` · 計畫達成 ${planRate}%`:''}`
-      : (p.plan > 0 ? `計畫 ${p.plan.toLocaleString()} 盒 · 達成 ${planRate}%` : `合計 ${totalBox.toLocaleString()} 盒`);
+    // 盒數 = 訂單確定，計畫 = 實際（一樣值）。推送後 actual 可能還沒填，優先用計畫，否則用實際
+    const box = p.plan > 0 ? p.plan : p.val;
+    const capPct = p.cap ? Math.min(100, Math.round(box/p.cap*100)) : 0;
+    const meterPct = p.cap ? capPct : (box > 0 ? 100 : 0);
+
+    const subParts = [];
+    if (p.cap) subParts.push(`產能 ${capPct}%（${box.toLocaleString()}/${p.cap.toLocaleString()}）`);
+    else if (box > 0) subParts.push(`本週出貨 ${box.toLocaleString()} 盒`);
+    // 若實際跟計畫不同（罕見：補單、退單），順便顯示
+    if (p.val > 0 && p.plan > 0 && p.val !== p.plan) {
+      subParts.push(`實際 ${p.val.toLocaleString()} vs 計畫 ${p.plan.toLocaleString()}`);
+    }
+    const subText = subParts.join(' · ') || (p.cap ? `產能上限 ${p.cap.toLocaleString()} 盒` : '—');
+
     const valCell = isAdmin
       ? `<input type="number" class="pill-edit" min="0" value="${p.val}" onchange="quickSave('${p.field}',this.value)"> <span class="pill-unit">盒</span>`
-      : `<span class="pill-value">${p.val.toLocaleString()}<span class="pill-unit">盒</span></span>`;
+      : `<span class="pill-value">${box.toLocaleString()}<span class="pill-unit">盒</span></span>`;
     return `<div class="stat-pill ${p.cls}">
       <div class="pill-label">${p.label} <span class="pill-chip ${p.chipCls}">${p.chip}</span></div>
       <div>
-        ${isAdmin ? valCell : `<div class="pill-value">${p.val.toLocaleString()}<span class="pill-unit">盒</span></div>`}
+        ${isAdmin ? valCell : `<div class="pill-value">${box.toLocaleString()}<span class="pill-unit">盒</span></div>`}
         <div class="pill-meter"><div style="width:${meterPct}%"></div></div>
         <div class="pill-sub">${subText}</div>
       </div>
     </div>`;
   }).join('');
 
+  // 盒數：訂單確定 → 有計畫用計畫，否則用實際
+  const effBox = plannedTotal > 0 ? plannedTotal : totalBox;
   const summaryHtml = `<div style="display:flex;gap:20px;flex-wrap:wrap;margin-top:14px;padding:12px 16px;background:#F9FAFB;border-radius:10px">
-    <div style="font-size:12px;color:#555">總組裝：<strong style="color:#111827;font-size:16px">${totalBox.toLocaleString()}</strong> 盒${hasPlan ? ` <span style="font-size:11px;color:#9CA3AF">/ 計畫 ${plannedTotal.toLocaleString()}</span>` : ''}</div>
-    ${hasPlan && plannedTotal > 0 ? `<div style="font-size:12px;color:#555">達成率：<strong style="color:${Math.round(totalBox/plannedTotal*100)>=95?'var(--green)':Math.round(totalBox/plannedTotal*100)>=80?'var(--amber)':'var(--red)'}">${Math.round(totalBox/plannedTotal*100)}%</strong></div>` : ''}
+    <div style="font-size:12px;color:#555">本週組裝：<strong style="color:#111827;font-size:16px">${effBox.toLocaleString()}</strong> 盒</div>
+    ${totalBox > 0 && plannedTotal > 0 && totalBox !== plannedTotal ? `<div style="font-size:12px;color:#555">實際 ${totalBox.toLocaleString()} vs 計畫 ${plannedTotal.toLocaleString()}</div>` : ''}
     <div style="font-size:12px;color:#555;margin-left:auto">不良金額：<strong style="color:${d.badCost>5000?'var(--critical)':'#111827'}">$${(d.badCost||0).toLocaleString()}</strong></div>
   </div>`;
 
